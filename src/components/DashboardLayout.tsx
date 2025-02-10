@@ -1,20 +1,22 @@
 
 import { 
-  Calendar, 
   LayoutDashboard, 
   LogOut, 
   MessageSquare, 
   User, 
-  BookOpen, 
-  Users,
   FileText,
   Bell,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  Brain,
+  FileCheck,
+  Users
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+
   return (
     <div className="min-h-screen bg-nav text-nav-foreground flex">
       {/* Sidebar */}
@@ -32,13 +34,19 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               { icon: LayoutDashboard, label: "Overview", path: "/" },
               { icon: Users, label: "User Management", path: "/users" },
               { icon: FileText, label: "Applications", path: "/applications" },
+              { icon: Brain, label: "Eligibility", path: "/eligibility" },
+              { icon: FileCheck, label: "Documents", path: "/documents" },
               { icon: MessageSquare, label: "Consultations", path: "/consultations" },
               { icon: Bell, label: "Notifications", path: "/notifications" },
             ].map((item, index) => (
               <li key={index}>
                 <Link
                   to={item.path}
-                  className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/5 transition-colors duration-200"
+                  className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    location.pathname === item.path
+                      ? "bg-white/10"
+                      : "hover:bg-white/5"
+                  }`}
                 >
                   <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
@@ -59,7 +67,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
               <li key={index}>
                 <Link
                   to={item.path}
-                  className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/5 transition-colors duration-200"
+                  className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    location.pathname === item.path
+                      ? "bg-white/10"
+                      : "hover:bg-white/5"
+                  }`}
                 >
                   <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
@@ -72,32 +84,4 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <button className="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors duration-200">
           <LogOut className="w-5 h-5" />
           <span>Sign out</span>
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <header className="border-b border-white/10 p-6 flex justify-between items-center backdrop-blur-sm bg-nav/50">
-          <div>
-            <h2 className="text-2xl font-semibold">Admin Dashboard</h2>
-            <p className="text-sm text-gray-400">Manage applications, users, and system settings</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-              <User className="w-5 h-5" />
-              <span>Admin</span>
-            </button>
-          </div>
-        </header>
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default DashboardLayout;
+        </button
