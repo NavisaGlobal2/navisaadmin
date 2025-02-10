@@ -1,5 +1,5 @@
 
-import { CheckCircle, Clock, FileCheck, Loader2 } from "lucide-react";
+import { Calendar, CheckCircle, Clock, FileCheck, Loader2 } from "lucide-react";
 
 const Dashboard = () => {
   return (
