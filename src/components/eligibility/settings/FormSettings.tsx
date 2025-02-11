@@ -18,7 +18,6 @@ import * as z from "zod";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   allowGuestSubmissions: z.boolean(),
@@ -74,80 +73,80 @@ export const FormSettings = () => {
 
   return (
     <div className="space-y-8" role="region" aria-label="Form Settings">
-      <nav aria-label="Form sections navigation">
-        <h3 className="text-lg font-medium mb-4">Form Sections</h3>
-        <div className="grid gap-3">
-          {form.watch('sections').map((section, index) => (
-            <div 
-              key={index} 
-              className="p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
-              role="region"
-              aria-label={`${section.title} section settings`}
-            >
-              <FormField
-                control={form.control}
-                name={`sections.${index}.enabled`}
-                render={({ field }) => (
-                  <div className="flex items-center justify-between mb-2">
-                    <FormLabel className="text-base font-medium cursor-pointer">
-                      {section.title}
-                    </FormLabel>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      aria-label={`Enable ${section.title} section`}
-                    />
-                  </div>
-                )}
-              />
-              
-              {form.watch(`sections.${index}.enabled`) && (
-                <div className="space-y-4 mt-4 pl-4 border-l">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <nav aria-label="Form sections navigation">
+            <h3 className="text-lg font-medium mb-4">Form Sections</h3>
+            <div className="grid gap-3">
+              {form.watch('sections').map((section, index) => (
+                <div 
+                  key={index} 
+                  className="p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+                  role="region"
+                  aria-label={`${section.title} section settings`}
+                >
                   <FormField
                     control={form.control}
-                    name={`sections.${index}.description`}
+                    name={`sections.${index}.enabled`}
                     render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Section description"
-                            className="h-8"
-                          />
-                        </FormControl>
-                      </FormItem>
+                      <div className="flex items-center justify-between mb-2">
+                        <FormLabel className="text-base font-medium cursor-pointer">
+                          {section.title}
+                        </FormLabel>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          aria-label={`Enable ${section.title} section`}
+                        />
+                      </div>
                     )}
                   />
                   
-                  <FormField
-                    control={form.control}
-                    name={`sections.${index}.required`}
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            aria-label={`Make ${section.title} required`}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm">
-                          Required field
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
+                  {form.watch(`sections.${index}.enabled`) && (
+                    <div className="space-y-4 mt-4 pl-4 border-l">
+                      <FormField
+                        control={form.control}
+                        name={`sections.${index}.description`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Section description"
+                                className="h-8"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name={`sections.${index}.required`}
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                aria-label={`Make ${section.title} required`}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm">
+                              Required field
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
-      </nav>
+          </nav>
 
-      <Separator role="separator" />
+          <Separator role="separator" />
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4" role="region" aria-label="General settings">
             <FormField
               control={form.control}
