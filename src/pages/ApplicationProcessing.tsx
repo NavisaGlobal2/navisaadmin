@@ -3,7 +3,7 @@ import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Bell, CheckCircle, Clock, FileText } from "lucide-react";
+import { AlertCircle, Bell, CheckCircle, Clock, FileText, ChevronRight } from "lucide-react";
 import { mockApplications } from "@/data/mockApplications";
 import { Application } from "@/types/application";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +33,28 @@ const ApplicationProcessing = () => {
       description: "You have new application updates",
     });
   };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Approved":
+        return "text-green-500 bg-green-500/20";
+      case "In Review":
+        return "text-yellow-500 bg-yellow-500/20";
+      case "Pending":
+        return "text-blue-500 bg-blue-500/20";
+      case "Rejected":
+        return "text-red-500 bg-red-500/20";
+      default:
+        return "text-gray-500 bg-gray-500/20";
+    }
+  };
+
+  const applicationSteps = [
+    { number: 1, title: "Initial Review", description: "Document verification and basic eligibility check" },
+    { number: 2, title: "Background Check", description: "Detailed background verification process" },
+    { number: 3, title: "Expert Assessment", description: "Review by domain expert" },
+    { number: 4, title: "Final Decision", description: "Application approval or rejection" }
+  ];
 
   return (
     <DashboardLayout>
@@ -73,19 +95,32 @@ const ApplicationProcessing = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               {applications.slice(0, 3).map((app, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
-                  <div>
-                    <h4 className="font-medium">{app.name}</h4>
+                <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
+                  <div className="space-y-1">
+                    <h4 className="font-medium flex items-center gap-2">
+                      {app.name}
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </h4>
                     <p className="text-sm text-gray-400">{app.type}</p>
+                    <div className="flex gap-2 items-center">
+                      {app.documents.map((doc, docIndex) => (
+                        <span 
+                          key={docIndex}
+                          className={`text-xs px-2 py-1 rounded-full ${
+                            doc.status === "Verified" 
+                              ? "bg-green-500/20 text-green-500"
+                              : doc.status === "Pending"
+                              ? "bg-yellow-500/20 text-yellow-500"
+                              : "bg-red-500/20 text-red-500"
+                          }`}
+                        >
+                          {doc.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="text-right">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      app.status === "Approved"
-                        ? "bg-green-500/20 text-green-500"
-                        : app.status === "In Review"
-                        ? "bg-yellow-500/20 text-yellow-500"
-                        : "bg-blue-500/20 text-blue-500"
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(app.status)}`}>
                       {app.status}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
@@ -99,39 +134,24 @@ const ApplicationProcessing = () => {
 
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle>Processing Timeline</CardTitle>
+              <CardTitle>Application Steps</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
-                {[
-                  {
-                    title: "Document Verification",
-                    description: "Initial documents verified",
-                    time: "Completed",
-                    icon: CheckCircle
-                  },
-                  {
-                    title: "Background Check",
-                    description: "Processing background verification",
-                    time: "In Progress",
-                    icon: Clock
-                  },
-                  {
-                    title: "Expert Review",
-                    description: "Awaiting expert review",
-                    time: "Pending",
-                    icon: AlertCircle
-                  }
-                ].map((step, index) => (
+                {applicationSteps.map((step, index) => (
                   <div key={index} className="flex gap-4">
-                    <div className="mt-1">
-                      <step.icon className="w-5 h-5" />
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
+                        {step.number}
+                      </div>
                     </div>
-                    <div>
+                    <div className="flex-grow">
                       <h4 className="font-medium">{step.title}</h4>
                       <p className="text-sm text-gray-400">{step.description}</p>
-                      <p className="text-sm text-gray-500">{step.time}</p>
                     </div>
+                    {index < applicationSteps.length - 1 && (
+                      <div className="absolute left-4 ml-4 w-0.5 h-16 bg-primary/20" />
+                    )}
                   </div>
                 ))}
               </div>
