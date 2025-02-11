@@ -84,4 +84,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <button className="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors duration-200">
           <LogOut className="w-5 h-5" />
           <span>Sign out</span>
-        </button
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        {children}
+      </main>
+    </div>
+  );
+};
+
+export default DashboardLayout;
