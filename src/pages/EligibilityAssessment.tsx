@@ -63,13 +63,13 @@ const EligibilityAssessment = () => {
 
         {/* Search and Filter Bar */}
         <div className="flex gap-4">
-          <div className="flex-1">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
               placeholder="Search by name, email, or visa type..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
-              icon={<Search className="w-4 h-4" />}
+              className="w-full pl-10"
             />
           </div>
           <DropdownMenu>
