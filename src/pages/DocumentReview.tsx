@@ -7,7 +7,6 @@ import { DocumentValidation } from "@/components/documents/DocumentValidation";
 import { DocumentUploadModal } from "@/components/documents/DocumentUploadModal";
 import { useToast } from "@/hooks/use-toast";
 import { Document, DocumentStatus, Application } from "@/types/application";
-import { mockApplications } from "@/data/mockApplications";
 import {
   Select,
   SelectContent,
@@ -15,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useApplications } from "@/hooks/use-applications";
+import { useApplications } from "@/hooks/useApplications";
 
 const DocumentReview = () => {
   const { toast } = useToast();
