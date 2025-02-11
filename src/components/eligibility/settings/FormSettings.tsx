@@ -32,7 +32,12 @@ export const FormSettings = () => {
         skills: true,
         achievements: true,
       },
-      sections: defaultSections,
+      sections: defaultSections.map(section => ({
+        title: section.title,
+        required: section.required,
+        description: section.description,
+        enabled: section.enabled
+      })),
     },
   });
 
