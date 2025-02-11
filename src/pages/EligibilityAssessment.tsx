@@ -1,22 +1,110 @@
 
+import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Brain, ChevronDown, Percent, ThumbsDown, ThumbsUp } from "lucide-react";
+import {
+  Brain,
+  ChevronDown,
+  Percent,
+  ThumbsDown,
+  ThumbsUp,
+  Search,
+  Filter,
+  History,
+  Settings,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const EligibilityAssessment = () => {
+  const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const handleAIParamsClick = () => {
+    toast({
+      title: "AI Parameters",
+      description: "Opening AI parameter configuration...",
+    });
+  };
+
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+    toast({
+      title: "Filter Applied",
+      description: `Showing ${filter} assessments`,
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold">AI Eligibility Assessment</h1>
-          <Button>
-            <Brain className="w-4 h-4 mr-2" />
-            Adjust AI Parameters
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => {}}>
+              <History className="w-4 h-4 mr-2" />
+              Assessment History
+            </Button>
+            <Button onClick={handleAIParamsClick}>
+              <Brain className="w-4 h-4 mr-2" />
+              Adjust AI Parameters
+            </Button>
+          </div>
+        </div>
+
+        {/* Search and Filter Bar */}
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <Input
+              placeholder="Search by name, email, or visa type..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full"
+              icon={<Search className="w-4 h-4" />}
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+                <ChevronDown className="w-4 h-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuItem onClick={() => handleFilterChange("all")}>
+                All Assessments
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleFilterChange("pending")}>
+                Pending Review
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleFilterChange("approved")}>
+                Approved
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleFilterChange("rejected")}>
+                Rejected
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleFilterChange("manual")}>
+                Manual Adjustments
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button variant="outline">
+            <Settings className="w-4 h-4 mr-2" />
+            Framework Settings
           </Button>
         </div>
 
+        {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
             { title: "Success Rate", value: "78%", icon: ThumbsUp, color: "green" },
@@ -37,6 +125,7 @@ const EligibilityAssessment = () => {
           ))}
         </div>
 
+        {/* Recent Assessments and Criteria */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
@@ -48,24 +137,28 @@ const EligibilityAssessment = () => {
                   name: "John Doe",
                   score: 85,
                   recommendation: "Highly Eligible",
+                  visaType: "UK Global Talent Visa",
                   time: "2 hours ago"
                 },
                 {
                   name: "Jane Smith",
                   score: 72,
                   recommendation: "Eligible with Conditions",
+                  visaType: "EB-1 Visa",
                   time: "5 hours ago"
                 },
                 {
                   name: "Mike Johnson",
                   score: 45,
                   recommendation: "Not Eligible",
+                  visaType: "Express Entry Canada",
                   time: "1 day ago"
                 }
               ].map((assessment, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
                   <div>
                     <h4 className="font-medium">{assessment.name}</h4>
+                    <p className="text-sm text-gray-400">{assessment.visaType}</p>
                     <p className="text-sm text-gray-400">{assessment.recommendation}</p>
                   </div>
                   <div className="text-right">
@@ -85,9 +178,9 @@ const EligibilityAssessment = () => {
               {[
                 { name: "Education Qualification", score: 85 },
                 { name: "Work Experience", score: 70 },
-                { name: "Language Proficiency", score: 90 },
-                { name: "Financial Status", score: 75 },
-                { name: "Age Factor", score: 80 }
+                { name: "Publications & Research", score: 90 },
+                { name: "Industry Recognition", score: 75 },
+                { name: "Leadership Experience", score: 80 }
               ].map((criteria, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between">
