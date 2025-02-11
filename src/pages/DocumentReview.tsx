@@ -8,19 +8,39 @@ import { RecentDocuments } from "@/components/documents/RecentDocuments";
 import { DocumentRequirements } from "@/components/documents/DocumentRequirements";
 import { DocumentValidation } from "@/components/documents/DocumentValidation";
 import { useToast } from "@/hooks/use-toast";
-import { Document, DocumentStatus } from "@/types/application";
+import { Document, DocumentStatus, Application } from "@/types/application";
 import { mockApplications } from "@/data/mockApplications";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DocumentReview = () => {
   const { toast } = useToast();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string>("all");
+  const [selectedApplicationType, setSelectedApplicationType] = useState<string>("all");
 
-  // Get all documents from all applications
-  const allDocuments = mockApplications.reduce((docs, app) => {
+  // Get unique users and application types
+  const users = Array.from(new Set(mockApplications.map(app => app.name)));
+  const applicationTypes = Array.from(new Set(mockApplications.map(app => app.type)));
+
+  // Filter applications based on selection
+  const filteredApplications = mockApplications.filter(app => {
+    const userMatch = selectedUser === "all" || app.name === selectedUser;
+    const typeMatch = selectedApplicationType === "all" || app.type === selectedApplicationType;
+    return userMatch && typeMatch;
+  });
+
+  // Get all documents from filtered applications
+  const allDocuments = filteredApplications.reduce((docs, app) => {
     return [...docs, ...app.documents];
   }, [] as Document[]);
 
-  // Stats calculation from actual data
+  // Stats calculation from filtered data
   const totalDocuments = allDocuments.length;
   const verifiedDocuments = allDocuments.filter(doc => doc.status === "Verified").length;
   const rejectedDocuments = allDocuments.filter(doc => doc.status === "Rejected").length;
@@ -77,6 +97,32 @@ const DocumentReview = () => {
             <Upload className="w-4 h-4 mr-2" />
             Upload Documents
           </Button>
+        </div>
+
+        <div className="flex gap-4 mb-6">
+          <Select value={selectedUser} onValueChange={setSelectedUser}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select User" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Users</SelectItem>
+              {users.map(user => (
+                <SelectItem key={user} value={user}>{user}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedApplicationType} onValueChange={setSelectedApplicationType}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Application Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Application Types</SelectItem>
+              {applicationTypes.map(type => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <DocumentStats
