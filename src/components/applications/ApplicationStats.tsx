@@ -14,7 +14,7 @@ export const ApplicationStats = ({ applications }: ApplicationStatsProps) => {
       inReview: applications.filter(app => app.status === "In Review").length,
       approved: applications.filter(app => app.status === "Approved").length,
       urgent: applications.filter(app => 
-        app.status === "Pending" && 
+        app.status === "Pending Review" && 
         new Date().getTime() - new Date(app.submittedAt).getTime() > 7 * 24 * 60 * 60 * 1000
       ).length
     };

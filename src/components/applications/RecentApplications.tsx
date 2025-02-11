@@ -7,12 +7,14 @@ interface RecentApplicationsProps {
   applications: Application[];
   onStatusChange: (applicationId: string, newStatus: Application["status"]) => void;
   onDocumentStatusUpdate: (applicationId: string, documentName: string, newStatus: "Verified" | "Pending" | "Rejected") => void;
+  onAssignExpert: (applicationId: string, expertName: string) => void;
 }
 
 export const RecentApplications = ({ 
   applications, 
   onStatusChange, 
-  onDocumentStatusUpdate 
+  onDocumentStatusUpdate,
+  onAssignExpert
 }: RecentApplicationsProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -20,7 +22,7 @@ export const RecentApplications = ({
         return "text-green-500 bg-green-500/20";
       case "In Review":
         return "text-yellow-500 bg-yellow-500/20";
-      case "Pending":
+      case "Pending Review":
         return "text-blue-500 bg-blue-500/20";
       case "Rejected":
         return "text-red-500 bg-red-500/20";
@@ -68,9 +70,9 @@ export const RecentApplications = ({
               <span 
                 className={`px-2 py-1 rounded-full text-xs ${getStatusColor(app.status)} cursor-pointer`}
                 onClick={() => onStatusChange(app.id, 
-                  app.status === "Pending" ? "In Review" :
+                  app.status === "Pending Review" ? "In Review" :
                   app.status === "In Review" ? "Approved" :
-                  app.status === "Approved" ? "Rejected" : "Pending"
+                  app.status === "Approved" ? "Rejected" : "Pending Review"
                 )}
               >
                 {app.status}
