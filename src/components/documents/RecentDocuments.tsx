@@ -1,13 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface Document {
-  name: string;
-  type: string;
-  status: "Approved" | "Pending" | "Rejected";
-  uploadedBy: string;
-  time: string;
-}
+import { Document } from "@/types/application";
 
 interface RecentDocumentsProps {
   documents: Document[];
@@ -28,7 +21,7 @@ export const RecentDocuments = ({ documents }: RecentDocumentsProps) => {
             </div>
             <div className="text-right">
               <span className={`px-2 py-1 rounded-full text-xs ${
-                doc.status === "Approved" 
+                doc.status === "Verified" 
                   ? "bg-green-500/20 text-green-500"
                   : doc.status === "Pending"
                   ? "bg-yellow-500/20 text-yellow-500"
