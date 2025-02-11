@@ -52,8 +52,8 @@ type User = {
 const UserManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
-  const [visaFilter, setVisaFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [visaFilter, setVisaFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Mock data - would come from API in real implementation
   const users: User[] = [
@@ -115,8 +115,8 @@ const UserManagement = () => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesVisa = !visaFilter || user.visaType === visaFilter;
-    const matchesStatus = !statusFilter || user.status === statusFilter;
+    const matchesVisa = visaFilter === "all" || user.visaType === visaFilter;
+    const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     return matchesSearch && matchesVisa && matchesStatus;
   });
 
@@ -154,7 +154,7 @@ const UserManagement = () => {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Visa Types</SelectLabel>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="Student Visa">Student Visa</SelectItem>
                   <SelectItem value="Work Permit">Work Permit</SelectItem>
                   <SelectItem value="Tourist Visa">Tourist Visa</SelectItem>
@@ -168,7 +168,7 @@ const UserManagement = () => {
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Status</SelectLabel>
-                  <SelectItem value="">All Status</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="Suspended">Suspended</SelectItem>
