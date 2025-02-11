@@ -12,8 +12,22 @@ export const mockApplications: Application[] = [
     submittedAt: "2024-03-10T10:00:00",
     lastUpdated: "2024-03-11T14:30:00",
     documents: [
-      { name: "Passport", status: "Verified", lastUpdated: "2024-03-11T12:00:00" },
-      { name: "Academic Records", status: "Pending", lastUpdated: "2024-03-10T10:00:00" }
+      { 
+        name: "Passport",
+        type: "Identity Document",
+        status: "Verified",
+        uploadedBy: "John Doe",
+        time: "2024-03-11T12:00:00",
+        lastUpdated: "2024-03-11T12:00:00"
+      },
+      { 
+        name: "Academic Records",
+        type: "Educational Document",
+        status: "Pending",
+        uploadedBy: "John Doe",
+        time: "2024-03-10T10:00:00",
+        lastUpdated: "2024-03-10T10:00:00"
+      }
     ],
     assignedExpert: "Sarah Wilson",
     nationality: "United States",
@@ -39,8 +53,22 @@ export const mockApplications: Application[] = [
     submittedAt: "2024-03-09T15:20:00",
     lastUpdated: "2024-03-10T09:45:00",
     documents: [
-      { name: "Resume", status: "Verified", lastUpdated: "2024-03-09T16:00:00" },
-      { name: "Job Offer", status: "Pending", lastUpdated: "2024-03-09T15:20:00" }
+      { 
+        name: "Resume",
+        type: "Professional Document",
+        status: "Verified",
+        uploadedBy: "Jane Smith",
+        time: "2024-03-09T16:00:00",
+        lastUpdated: "2024-03-09T16:00:00"
+      },
+      { 
+        name: "Job Offer",
+        type: "Employment Document",
+        status: "Pending",
+        uploadedBy: "Jane Smith",
+        time: "2024-03-09T15:20:00",
+        lastUpdated: "2024-03-09T15:20:00"
+      }
     ],
     nationality: "Canada",
     workHistory: "5 years in Finance",
@@ -56,8 +84,22 @@ export const mockApplications: Application[] = [
     submittedAt: "2024-03-08T11:00:00",
     lastUpdated: "2024-03-09T16:20:00",
     documents: [
-      { name: "Bank Statement", status: "Verified", lastUpdated: "2024-03-09T14:00:00" },
-      { name: "Education Certificate", status: "Verified", lastUpdated: "2024-03-09T15:00:00" }
+      { 
+        name: "Bank Statement",
+        type: "Financial Document",
+        status: "Verified",
+        uploadedBy: "Mike Johnson",
+        time: "2024-03-09T14:00:00",
+        lastUpdated: "2024-03-09T14:00:00"
+      },
+      { 
+        name: "Education Certificate",
+        type: "Educational Document",
+        status: "Verified",
+        uploadedBy: "Mike Johnson",
+        time: "2024-03-09T15:00:00",
+        lastUpdated: "2024-03-09T15:00:00"
+      }
     ],
     assignedExpert: "Michael Brown",
     nationality: "UK",
