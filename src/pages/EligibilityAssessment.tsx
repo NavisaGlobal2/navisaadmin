@@ -2,13 +2,15 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Brain, History } from "lucide-react";
+import { Brain, History, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { StatsOverview } from "@/components/eligibility/StatsOverview";
 import { SearchFilters } from "@/components/eligibility/SearchFilters";
 import { AssessmentList } from "@/components/eligibility/AssessmentList";
 import { AssessmentCriteria } from "@/components/eligibility/AssessmentCriteria";
 import { HistoricalTrends } from "@/components/eligibility/HistoricalTrends";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FrameworkSettings } from "@/components/eligibility/settings/FrameworkSettings";
 
 const EligibilityAssessment = () => {
   const { toast } = useToast();
@@ -50,6 +52,20 @@ const EligibilityAssessment = () => {
               <History className="w-4 h-4 mr-2" />
               Assessment History
             </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="flex-1 sm:flex-none">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Framework Settings
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Assessment Framework Settings</DialogTitle>
+                </DialogHeader>
+                <FrameworkSettings />
+              </DialogContent>
+            </Dialog>
             <Button onClick={handleAIParamsClick} className="flex-1 sm:flex-none">
               <Brain className="w-4 h-4 mr-2" />
               Adjust AI Parameters
