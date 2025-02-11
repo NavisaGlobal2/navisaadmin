@@ -154,6 +154,10 @@ const ApplicationProcessing = () => {
                               ? "bg-yellow-500/20 text-yellow-500"
                               : "bg-red-500/20 text-red-500"
                           }`}
+                          onClick={() => handleDocumentStatusUpdate(app.id, doc.name, 
+                            doc.status === "Pending" ? "Verified" : 
+                            doc.status === "Verified" ? "Rejected" : "Pending"
+                          )}
                         >
                           {doc.name}
                         </span>
@@ -161,7 +165,14 @@ const ApplicationProcessing = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(app.status)}`}>
+                    <span 
+                      className={`px-2 py-1 rounded-full text-xs ${getStatusColor(app.status)} cursor-pointer`}
+                      onClick={() => handleStatusChange(app.id, 
+                        app.status === "Pending" ? "In Review" :
+                        app.status === "In Review" ? "Approved" :
+                        app.status === "Approved" ? "Rejected" : "Pending"
+                      )}
+                    >
                       {app.status}
                     </span>
                     <p className="text-sm text-gray-400 mt-1">
