@@ -8,6 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Search, Filter, ChevronDown, Settings } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FrameworkSettings } from "@/components/eligibility/settings/FrameworkSettings";
 
 interface SearchFiltersProps {
   searchQuery: string;
@@ -58,10 +60,20 @@ export const SearchFilters = ({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="flex-1 sm:flex-none">
-          <Settings className="w-4 h-4 mr-2" />
-          Framework Settings
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="flex-1 sm:flex-none">
+              <Settings className="w-4 h-4 mr-2" />
+              Framework Settings
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>Assessment Framework Settings</DialogTitle>
+            </DialogHeader>
+            <FrameworkSettings />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
