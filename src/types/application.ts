@@ -5,7 +5,10 @@ export type DocumentStatus = "Verified" | "Pending" | "Rejected";
 
 export interface Document {
   name: string;
+  type: string;
   status: DocumentStatus;
+  uploadedBy: string;
+  time: string;
   lastUpdated?: string;
   notes?: string;
   version?: number;
