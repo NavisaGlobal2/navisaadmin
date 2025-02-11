@@ -18,7 +18,7 @@ const DocumentReview = () => {
     {
       name: "Passport.pdf",
       type: "Identity Document",
-      status: "Approved" as const,
+      status: "Verified" as const,
       uploadedBy: "John Doe",
       time: "2 hours ago",
       version: 1,
