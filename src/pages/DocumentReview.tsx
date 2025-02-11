@@ -1,12 +1,11 @@
 
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
 import { DocumentStats } from "@/components/documents/DocumentStats";
 import { RecentDocuments } from "@/components/documents/RecentDocuments";
 import { DocumentRequirements } from "@/components/documents/DocumentRequirements";
 import { DocumentValidation } from "@/components/documents/DocumentValidation";
+import { DocumentUploadModal } from "@/components/documents/DocumentUploadModal";
 import { useToast } from "@/hooks/use-toast";
 import { Document, DocumentStatus, Application } from "@/types/application";
 import { mockApplications } from "@/data/mockApplications";
@@ -85,6 +84,27 @@ const DocumentReview = () => {
     });
   };
 
+  const handleEdit = (documentName: string, notes: string) => {
+    toast({
+      title: "Document Updated",
+      description: `Notes updated for ${documentName}`,
+    });
+  };
+
+  const handleImproveWithAI = (documentName: string) => {
+    toast({
+      title: "AI Improvement Started",
+      description: `Starting AI improvement process for ${documentName}`,
+    });
+  };
+
+  const handleUpload = (file: File) => {
+    toast({
+      title: "Document Uploaded",
+      description: `Successfully uploaded ${file.name}`,
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -93,10 +113,7 @@ const DocumentReview = () => {
             <h1 className="text-2xl font-semibold">Document Review</h1>
             <p className="text-sm text-gray-400">Review and validate application documents</p>
           </div>
-          <Button>
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Documents
-          </Button>
+          <DocumentUploadModal onUpload={handleUpload} />
         </div>
 
         <div className="flex gap-4 mb-6">
@@ -147,6 +164,8 @@ const DocumentReview = () => {
                 onValidate={handleValidate}
                 onApprove={handleApprove}
                 onReject={handleReject}
+                onEdit={handleEdit}
+                onImproveWithAI={handleImproveWithAI}
               />
             ))}
           </div>

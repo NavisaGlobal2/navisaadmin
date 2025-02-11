@@ -4,27 +4,56 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, AlertCircle, XCircle, FileText, History } from "lucide-react";
+import { 
+  CheckCircle, 
+  AlertCircle, 
+  XCircle, 
+  FileText, 
+  History, 
+  Edit, 
+  Wand2 
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 interface DocumentValidationProps {
   document: Document;
   onValidate: (documentName: string) => void;
   onApprove: (documentName: string) => void;
   onReject: (documentName: string, reason: string) => void;
+  onEdit: (documentName: string, notes: string) => void;
+  onImproveWithAI: (documentName: string) => void;
 }
 
 export const DocumentValidation = ({
   document,
   onValidate,
   onApprove,
-  onReject
+  onReject,
+  onEdit,
+  onImproveWithAI
 }: DocumentValidationProps) => {
+  const [editNotes, setEditNotes] = useState(document.notes || "");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEdit = () => {
+    onEdit(document.name, editNotes);
+    setIsEditing(false);
+  };
+
   return (
     <Card className="bg-white/5 border-white/10">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -112,6 +141,27 @@ export const DocumentValidation = ({
           </div>
         )}
 
+        <div>
+          <Dialog open={isEditing} onOpenChange={setIsEditing}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Document Notes</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <Textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Add notes about this document..."
+                  className="min-h-[100px]"
+                />
+                <Button onClick={handleEdit} className="w-full">
+                  Save Changes
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         <div className="flex justify-end space-x-2 pt-4">
           <TooltipProvider>
             <Tooltip>
@@ -127,6 +177,38 @@ export const DocumentValidation = ({
               </TooltipTrigger>
               <TooltipContent>
                 <p>Run AI validation checks</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onImproveWithAI(document.name)}
+                >
+                  <Wand2 className="w-4 h-4 mr-1" />
+                  Improve with AI
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Use AI to improve document quality</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit className="w-4 h-4 mr-1" />
+                  Edit
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit document notes</p>
               </TooltipContent>
             </Tooltip>
 
