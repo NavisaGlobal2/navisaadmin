@@ -8,6 +8,19 @@ export interface Document {
   status: DocumentStatus;
   lastUpdated?: string;
   notes?: string;
+  version?: number;
+  validationResults?: {
+    isComplete: boolean;
+    isAccurate: boolean;
+    suggestions?: string[];
+    aiConfidenceScore?: number;
+  };
+  history?: {
+    version: number;
+    uploadedAt: string;
+    status: DocumentStatus;
+    notes?: string;
+  }[];
 }
 
 export interface InternalNote {
