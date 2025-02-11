@@ -1,7 +1,14 @@
-
 import { Calendar, CheckCircle, Clock, FileCheck, Loader2, Users, ArrowUp, ArrowDown, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllApplications = () => {
+    navigate('/applications');
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Statistics Overview */}
@@ -69,7 +76,16 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Applications */}
         <div className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
-          <h3 className="text-xl font-semibold mb-6">Recent Applications</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-semibold">Recent Applications</h3>
+            <Button 
+              variant="outline" 
+              onClick={handleViewAllApplications}
+              className="text-sm hover:bg-white/10"
+            >
+              View All
+            </Button>
+          </div>
           <div className="space-y-4">
             {[
               {
@@ -93,22 +109,26 @@ const Dashboard = () => {
             ].map((application, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/5"
+                className="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                onClick={() => navigate(`/applications/${index + 1}`)}
               >
                 <div>
                   <h4 className="font-medium">{application.name}</h4>
                   <p className="text-sm text-gray-400">{application.type}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-medium">{application.status}</span>
+                  <span className={`text-sm font-medium ${
+                    application.status === "Approved" ? "text-green-400" :
+                    application.status === "In Review" ? "text-yellow-400" :
+                    "text-gray-400"
+                  }`}>
+                    {application.status}
+                  </span>
                   <p className="text-sm text-gray-400">{application.date}</p>
                 </div>
               </div>
             ))}
           </div>
-          <button className="w-full mt-4 px-4 py-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-            View All Applications
-          </button>
         </div>
 
         {/* Application Status */}
