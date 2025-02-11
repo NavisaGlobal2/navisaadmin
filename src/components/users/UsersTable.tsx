@@ -32,38 +32,46 @@ export const UsersTable = ({
   onActivateUser,
 }: UsersTableProps) => {
   return (
-    <div className="bg-white/5 rounded-xl border border-white/10">
+    <div className="relative w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Visa Type</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Expert Assigned</TableHead>
-            <TableHead>Country</TableHead>
-            <TableHead>Last Updated</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[200px] whitespace-normal">Name</TableHead>
+            <TableHead className="w-[250px] whitespace-normal">Email</TableHead>
+            <TableHead className="w-[150px] whitespace-normal">
+              Visa Type
+            </TableHead>
+            <TableHead className="w-[120px] whitespace-normal">Status</TableHead>
+            <TableHead className="w-[180px] whitespace-normal">
+              Expert Assigned
+            </TableHead>
+            <TableHead className="w-[140px] whitespace-normal">Country</TableHead>
+            <TableHead className="w-[150px] whitespace-normal">
+              Last Updated
+            </TableHead>
+            <TableHead className="w-[100px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.id}>
+            <TableRow key={user.id} className="hover:bg-white/5">
               <TableCell className="font-medium">{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.visaType}</TableCell>
+              <TableCell className="text-muted-foreground">{user.email}</TableCell>
+              <TableCell className="text-muted-foreground">{user.visaType}</TableCell>
               <TableCell>
                 <Badge variant={
                   user.status === "Active" ? "default" :
                   user.status === "Pending" ? "secondary" :
                   "destructive"
-                }>
+                }
+                className="whitespace-nowrap"
+                >
                   {user.status}
                 </Badge>
               </TableCell>
-              <TableCell>{user.expert}</TableCell>
-              <TableCell>{user.country}</TableCell>
-              <TableCell>{user.lastUpdated}</TableCell>
+              <TableCell className="text-muted-foreground">{user.expert}</TableCell>
+              <TableCell className="text-muted-foreground">{user.country}</TableCell>
+              <TableCell className="text-muted-foreground">{user.lastUpdated}</TableCell>
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -71,21 +79,27 @@ export const UsersTable = ({
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onAssignExpert(user.id)}>
+                  <DropdownMenuContent align="end" className="w-[200px]">
+                    <DropdownMenuItem 
+                      onClick={() => onAssignExpert(user.id)}
+                      className="cursor-pointer"
+                    >
                       <UserCheck className="mr-2 h-4 w-4" />
                       <span>Assign Expert</span>
                     </DropdownMenuItem>
                     {user.status !== "Suspended" ? (
                       <DropdownMenuItem 
                         onClick={() => onSuspendUser(user.id)}
-                        className="text-destructive"
+                        className="text-destructive cursor-pointer"
                       >
                         <UserX className="mr-2 h-4 w-4" />
                         <span>Suspend User</span>
                       </DropdownMenuItem>
                     ) : (
-                      <DropdownMenuItem onClick={() => onActivateUser(user.id)}>
+                      <DropdownMenuItem 
+                        onClick={() => onActivateUser(user.id)}
+                        className="cursor-pointer"
+                      >
                         <Shield className="mr-2 h-4 w-4" />
                         <span>Activate User</span>
                       </DropdownMenuItem>
