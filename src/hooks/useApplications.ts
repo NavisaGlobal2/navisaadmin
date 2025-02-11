@@ -102,11 +102,47 @@ export const useApplications = () => {
     });
   };
 
+  const handleUploadDocument = (applicationId: string, file: File) => {
+    // Create a new document object
+    const newDocument = {
+      name: file.name,
+      type: file.type,
+      status: "Pending" as const,
+      uploadedBy: "Admin",
+      time: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      version: 1,
+      validationResults: {
+        isComplete: false,
+        isAccurate: false,
+        suggestions: [],
+        aiConfidenceScore: 0
+      }
+    };
+
+    setApplications(applications.map(app => {
+      if (app.id === applicationId) {
+        return {
+          ...app,
+          documents: [...app.documents, newDocument],
+          lastUpdated: new Date().toISOString()
+        };
+      }
+      return app;
+    }));
+
+    toast({
+      title: "Document Uploaded",
+      description: `${file.name} has been uploaded successfully`,
+    });
+  };
+
   return {
     applications,
     handleStatusChange,
     handleDocumentStatusUpdate,
     handleAssignExpert,
-    handleAddNote
+    handleAddNote,
+    handleUploadDocument
   };
 };

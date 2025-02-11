@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { DocumentStats } from "@/components/documents/DocumentStats";
@@ -16,19 +15,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useApplications } from "@/hooks/use-applications";
 
 const DocumentReview = () => {
   const { toast } = useToast();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [selectedUser, setSelectedUser] = useState<string>("all");
   const [selectedApplicationType, setSelectedApplicationType] = useState<string>("all");
+  const { applications, handleUploadDocument } = useApplications();
 
   // Get unique users and application types
-  const users = Array.from(new Set(mockApplications.map(app => app.name)));
-  const applicationTypes = Array.from(new Set(mockApplications.map(app => app.type)));
+  const users = Array.from(new Set(applications.map(app => app.name)));
+  const applicationTypes = Array.from(new Set(applications.map(app => app.type)));
 
   // Filter applications based on selection
-  const filteredApplications = mockApplications.filter(app => {
+  const filteredApplications = applications.filter(app => {
     const userMatch = selectedUser === "all" || app.name === selectedUser;
     const typeMatch = selectedApplicationType === "all" || app.type === selectedApplicationType;
     return userMatch && typeMatch;
@@ -99,10 +100,16 @@ const DocumentReview = () => {
   };
 
   const handleUpload = (file: File) => {
-    toast({
-      title: "Document Uploaded",
-      description: `Successfully uploaded ${file.name}`,
-    });
+    const firstApplicationId = filteredApplications[0]?.id;
+    if (firstApplicationId) {
+      handleUploadDocument(firstApplicationId, file);
+    } else {
+      toast({
+        title: "Upload Failed",
+        description: "No application selected to upload document to",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
