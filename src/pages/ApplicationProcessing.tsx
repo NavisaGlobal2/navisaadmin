@@ -12,6 +12,7 @@ import { RecentApplications } from "@/components/applications/RecentApplications
 import { ApplicationDetails } from "@/components/applications/ApplicationDetails";
 import { ApplicationFilters } from "@/components/applications/ApplicationFilters";
 import { ApplicationsTable } from "@/components/applications/ApplicationsTable";
+import { filterApplications } from "@/utils/applicationStatusUtils";
 
 const ApplicationProcessing = () => {
   const [applications, setApplications] = useState<Application[]>(mockApplications);
@@ -118,17 +119,7 @@ const ApplicationProcessing = () => {
     });
   };
 
-  const filteredApplications = applications.filter(app => {
-    const matchesSearch = 
-      app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.id.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || app.status === statusFilter;
-    const matchesExpert = expertFilter === "all" || app.assignedExpert === expertFilter;
-    
-    return matchesSearch && matchesStatus && matchesExpert;
-  });
+  const filteredApplications = filterApplications(applications, searchQuery, statusFilter, expertFilter);
 
   return (
     <DashboardLayout>

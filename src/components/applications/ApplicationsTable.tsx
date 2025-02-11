@@ -11,14 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
-  MessageSquare,
-  User,
-  XCircle 
-} from "lucide-react";
+import { User } from "lucide-react";
+import { getStatusConfig } from "@/utils/applicationStatusUtils";
 
 interface ApplicationsTableProps {
   applications: Application[];
@@ -32,16 +26,7 @@ export const ApplicationsTable = ({
   onAssignExpert,
 }: ApplicationsTableProps) => {
   const getStatusBadge = (status: Application["status"]) => {
-    const statusConfig = {
-      "Pending Review": { icon: Clock, className: "bg-blue-500/10 text-blue-500" },
-      "In Review": { icon: AlertCircle, className: "bg-yellow-500/10 text-yellow-500" },
-      "Approved": { icon: CheckCircle, className: "bg-green-500/10 text-green-500" },
-      "Rejected": { icon: XCircle, className: "bg-red-500/10 text-red-500" },
-      "More Info Needed": { icon: MessageSquare, className: "bg-purple-500/10 text-purple-500" },
-      "Escalated": { icon: AlertCircle, className: "bg-orange-500/10 text-orange-500" }
-    };
-
-    const config = statusConfig[status];
+    const config = getStatusConfig(status);
     return (
       <Badge variant="secondary" className={config.className}>
         <config.icon className="w-3 h-3 mr-1" />
