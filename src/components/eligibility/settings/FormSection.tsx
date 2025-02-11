@@ -5,14 +5,16 @@ import { Switch } from "@/components/ui/switch";
 import { Control } from "react-hook-form";
 import { FormSettingsValues } from "./form-settings-schema";
 
+type FormSection = {
+  title: string;
+  required: boolean;
+  description: string;
+  enabled: boolean;
+};
+
 interface FormSectionProps {
   index: number;
-  section: {
-    title: string;
-    required: boolean;
-    description: string;
-    enabled: boolean;
-  };
+  section: FormSection;
   control: Control<FormSettingsValues>;
 }
 

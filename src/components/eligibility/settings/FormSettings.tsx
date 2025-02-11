@@ -17,7 +17,7 @@ const defaultSections = [
   { title: "Achievements", required: true, description: "Notable achievements", enabled: true },
   { title: "Preferred Countries", required: true, description: "Location preferences", enabled: true },
   { title: "CV Upload", required: true, description: "Resume/CV document", enabled: true },
-];
+] as const;
 
 export const FormSettings = () => {
   const { toast } = useToast();
@@ -55,7 +55,7 @@ export const FormSettings = () => {
                 <FormSection
                   key={index}
                   index={index}
-                  section={section}
+                  section={section as { title: string; required: boolean; description: string; enabled: boolean }}
                   control={form.control}
                 />
               ))}
