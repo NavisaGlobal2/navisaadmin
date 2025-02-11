@@ -10,17 +10,35 @@ import {
   ShieldCheck,
   Brain,
   FileCheck,
-  Users
+  Users,
+  Menu
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-nav text-nav-foreground flex">
+      {/* Mobile Menu Button */}
+      <Button
+        variant="ghost"
+        className="fixed top-4 left-4 z-50 md:hidden"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        <Menu className="w-5 h-5" />
+      </Button>
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/10 p-6 flex flex-col">
+      <aside className={`
+        fixed md:static inset-y-0 left-0 z-40 w-64 transform 
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        md:translate-x-0 transition-transform duration-200 ease-in-out
+        border-r border-white/10 p-6 flex flex-col bg-nav
+      `}>
         <div className="flex items-center gap-2 mb-10">
           <h1 className="text-xl font-semibold">Navisa Admin</h1>
         </div>
@@ -47,6 +65,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                       ? "bg-white/10"
                       : "hover:bg-white/5"
                   }`}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
@@ -72,6 +91,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                       ? "bg-white/10"
                       : "hover:bg-white/5"
                   }`}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon className="w-5 h-5" />
                   <span>{item.label}</span>
@@ -87,8 +107,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         </button>
       </aside>
 
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-4 md:p-6 w-full overflow-auto">
         {children}
       </main>
     </div>
