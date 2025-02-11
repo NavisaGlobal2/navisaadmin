@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -16,3 +15,52 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+const EligibilityAssessment = () => {
+  const [selectedFramework, setSelectedFramework] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleFrameworkChange = (value) => {
+    setSelectedFramework(value);
+    toast({ title: "Framework selected", description: value });
+  };
+
+  return (
+    <DashboardLayout>
+      <div>
+        <h1>Eligibility Assessment</h1>
+        <Select onValueChange={handleFrameworkChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a framework" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="framework1">Framework 1</SelectItem>
+            <SelectItem value="framework2">Framework 2</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button onClick={() => setIsDialogOpen(true)}>Open Dialog</Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger>Open</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Dialog Title</DialogTitle>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <StatsOverview />
+        <SearchFilters />
+        <AssessmentList />
+        <AssessmentCriteria />
+        <HistoricalTrends />
+        <FrameworkSettings />
+      </div>
+    </DashboardLayout>
+  );
+};
+
+// Add default export
+export default EligibilityAssessment;
