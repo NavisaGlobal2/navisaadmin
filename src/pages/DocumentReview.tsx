@@ -8,17 +8,17 @@ import { RecentDocuments } from "@/components/documents/RecentDocuments";
 import { DocumentRequirements } from "@/components/documents/DocumentRequirements";
 import { DocumentValidation } from "@/components/documents/DocumentValidation";
 import { useToast } from "@/hooks/use-toast";
-import { Document } from "@/types/application";
+import { Document, DocumentStatus } from "@/types/application";
 
 const DocumentReview = () => {
   const { toast } = useToast();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
-  const recentDocuments = [
+  const recentDocuments: Document[] = [
     {
       name: "Passport.pdf",
       type: "Identity Document",
-      status: "Verified" as const,
+      status: "Verified" as DocumentStatus,
       uploadedBy: "John Doe",
       time: "2 hours ago",
       version: 1,
@@ -31,14 +31,14 @@ const DocumentReview = () => {
         {
           version: 1,
           uploadedAt: "2024-03-15T10:00:00",
-          status: "Verified",
+          status: "Verified" as DocumentStatus,
         }
       ]
     },
     {
       name: "BankStatement.pdf",
       type: "Financial Document",
-      status: "Pending" as const,
+      status: "Pending" as DocumentStatus,
       uploadedBy: "Jane Smith",
       time: "5 hours ago",
       version: 2,
@@ -52,12 +52,12 @@ const DocumentReview = () => {
         {
           version: 2,
           uploadedAt: "2024-03-15T09:00:00",
-          status: "Pending",
+          status: "Pending" as DocumentStatus,
         },
         {
           version: 1,
           uploadedAt: "2024-03-14T14:00:00",
-          status: "Rejected",
+          status: "Rejected" as DocumentStatus,
           notes: "Incomplete statement"
         }
       ]
