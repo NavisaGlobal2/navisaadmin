@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -37,12 +36,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ApplicationDetails } from "@/components/applications/ApplicationDetails";
 
 const ApplicationProcessing = () => {
   const [applications, setApplications] = useState<Application[]>(mockApplications);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [expertFilter, setExpertFilter] = useState("all");
+  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const { toast } = useToast();
 
   const handleNotificationClick = () => {
@@ -112,6 +113,33 @@ const ApplicationProcessing = () => {
     toast({
       title: "Expert Assigned",
       description: `Application assigned to ${expertName}`,
+    });
+  };
+
+  const handleAddNote = (applicationId: string, note: { content: string; assignedTo?: string }) => {
+    const updatedApplications = applications.map(app => {
+      if (app.id === applicationId) {
+        return {
+          ...app,
+          internalNotes: [
+            ...(app.internalNotes || []),
+            {
+              id: Date.now().toString(),
+              content: note.content,
+              createdBy: "Admin",
+              createdAt: new Date().toISOString(),
+              assignedTo: note.assignedTo
+            }
+          ],
+          lastUpdated: new Date().toISOString()
+        };
+      }
+      return app;
+    });
+    setApplications(updatedApplications);
+    toast({
+      title: "Note Added",
+      description: "Internal note has been added to the application",
     });
   };
 
@@ -217,7 +245,11 @@ const ApplicationProcessing = () => {
                   </TableHeader>
                   <TableBody>
                     {filteredApplications.map((app) => (
-                      <TableRow key={app.id} className="cursor-pointer hover:bg-accent/50">
+                      <TableRow 
+                        key={app.id} 
+                        className="cursor-pointer hover:bg-accent/50"
+                        onClick={() => setSelectedApplication(app)}
+                      >
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -236,7 +268,10 @@ const ApplicationProcessing = () => {
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              onClick={() => handleAssignExpert(app.id, "Sarah Wilson")}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAssignExpert(app.id, "Sarah Wilson");
+                              }}
                             >
                               Assign Expert
                             </Button>
@@ -262,6 +297,14 @@ const ApplicationProcessing = () => {
             <ApplicationSteps />
           </div>
         </div>
+
+        {selectedApplication && (
+          <ApplicationDetails
+            application={selectedApplication}
+            onAddNote={handleAddNote}
+            onClose={() => setSelectedApplication(null)}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
