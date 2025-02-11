@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useApplications } from "@/hooks/useApplications";
+import { Button } from "@/components/ui/button";
+import { Download, Upload } from "lucide-react";
 
 const DocumentReview = () => {
   const { toast } = useToast();
@@ -44,6 +46,56 @@ const DocumentReview = () => {
   const verifiedDocuments = allDocuments.filter(doc => doc.status === "Verified").length;
   const rejectedDocuments = allDocuments.filter(doc => doc.status === "Rejected").length;
   const pendingDocuments = allDocuments.filter(doc => doc.status === "Pending").length;
+
+  const handleDownloadAllDocuments = () => {
+    if (allDocuments.length === 0) {
+      toast({
+        title: "No Documents",
+        description: "There are no documents to download",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create a text file with document information
+    const content = allDocuments.map(doc => `
+Document Name: ${doc.name}
+Type: ${doc.type}
+Status: ${doc.status}
+Uploaded By: ${doc.uploadedBy}
+Upload Time: ${doc.time}
+Last Updated: ${doc.lastUpdated}
+-------------------
+    `).join('\n');
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${selectedUser === "all" ? "all-users" : selectedUser}-documents.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Documents Downloaded",
+      description: `Downloaded ${allDocuments.length} documents`,
+    });
+  };
+
+  const handleUpload = (file: File) => {
+    const firstApplicationId = filteredApplications[0]?.id;
+    if (firstApplicationId) {
+      handleUploadDocument(firstApplicationId, file);
+    } else {
+      toast({
+        title: "Upload Failed",
+        description: "No application selected to upload document to",
+        variant: "destructive",
+      });
+    }
+  };
 
   const documentCategories = [
     {
@@ -98,19 +150,6 @@ const DocumentReview = () => {
     });
   };
 
-  const handleUpload = (file: File) => {
-    const firstApplicationId = filteredApplications[0]?.id;
-    if (firstApplicationId) {
-      handleUploadDocument(firstApplicationId, file);
-    } else {
-      toast({
-        title: "Upload Failed",
-        description: "No application selected to upload document to",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -119,7 +158,17 @@ const DocumentReview = () => {
             <h1 className="text-2xl font-semibold">Document Review</h1>
             <p className="text-sm text-gray-400">Review and validate application documents</p>
           </div>
-          <DocumentUploadModal onUpload={handleUpload} />
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleDownloadAllDocuments}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Download All
+            </Button>
+            <DocumentUploadModal onUpload={handleUpload} />
+          </div>
         </div>
 
         <div className="flex gap-4 mb-6">
