@@ -48,16 +48,67 @@ const EligibilityAssessment = () => {
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" className="flex-1 sm:flex-none">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Framework Settings
+                <Button className="flex-1 sm:flex-none">
+                  <Brain className="w-4 h-4 mr-2" />
+                  AI Parameters
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-3xl h-[90vh]">
+              <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Assessment Framework Settings</DialogTitle>
+                  <DialogTitle>AI Parameters Configuration</DialogTitle>
                 </DialogHeader>
-                <FrameworkSettings />
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <h3 className="text-sm font-medium">Confidence Threshold</h3>
+                    <Select defaultValue="0.8">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select threshold" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0.6">60% - More Lenient</SelectItem>
+                        <SelectItem value="0.7">70% - Balanced</SelectItem>
+                        <SelectItem value="0.8">80% - Conservative</SelectItem>
+                        <SelectItem value="0.9">90% - Strict</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Separator />
+                  <div className="grid gap-2">
+                    <h3 className="text-sm font-medium">Processing Mode</h3>
+                    <div className="flex items-center space-x-2">
+                      <Switch id="sync-mode" />
+                      <Label htmlFor="sync-mode">Synchronous Processing</Label>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="grid gap-2">
+                    <h3 className="text-sm font-medium">Document Analysis Depth</h3>
+                    <RadioGroup defaultValue="standard">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="basic" id="basic" />
+                        <Label htmlFor="basic">Basic (Faster)</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="standard" id="standard" />
+                        <Label htmlFor="standard">Standard</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="deep" id="deep" />
+                        <Label htmlFor="deep">Deep (Slower)</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={() => {
+                    toast({
+                      title: "AI Parameters Updated",
+                      description: "Changes will apply to new assessments",
+                    });
+                  }}>
+                    Save Changes
+                  </Button>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           </div>
@@ -81,5 +132,4 @@ const EligibilityAssessment = () => {
   );
 };
 
-// Add default export
 export default EligibilityAssessment;
