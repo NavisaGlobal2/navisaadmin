@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { scoringSchema, type ScoringValues, visaRequirements, visaTypeSchema } from "./scoring-schema";
 
-type VisaType = typeof visaTypeSchema._type;
+type VisaType = z.infer<typeof visaTypeSchema>;
 
 export const ScoringSettings = () => {
   const { toast } = useToast();
