@@ -56,6 +56,47 @@ const ApplicationProcessing = () => {
     { number: 4, title: "Final Decision", description: "Application approval or rejection" }
   ];
 
+  const handleStatusChange = (applicationId: string, newStatus: Application["status"]) => {
+    const updatedApplications = applications.map(app => {
+      if (app.id === applicationId) {
+        return {
+          ...app,
+          status: newStatus,
+          lastUpdated: new Date().toISOString()
+        };
+      }
+      return app;
+    });
+    setApplications(updatedApplications);
+    toast({
+      title: "Status Updated",
+      description: `Application status changed to ${newStatus}`,
+    });
+  };
+
+  const handleDocumentStatusUpdate = (applicationId: string, documentName: string, newStatus: "Verified" | "Pending" | "Rejected") => {
+    const updatedApplications = applications.map(app => {
+      if (app.id === applicationId) {
+        return {
+          ...app,
+          documents: app.documents.map(doc => {
+            if (doc.name === documentName) {
+              return { ...doc, status: newStatus };
+            }
+            return doc;
+          }),
+          lastUpdated: new Date().toISOString()
+        };
+      }
+      return app;
+    });
+    setApplications(updatedApplications);
+    toast({
+      title: "Document Status Updated",
+      description: `${documentName} status changed to ${newStatus}`,
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
