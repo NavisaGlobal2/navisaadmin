@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { scoringSchema, type ScoringValues, visaRequirements, visaTypeSchema } from "./scoring-schema";
 
 type VisaType = z.infer<typeof visaTypeSchema>;
