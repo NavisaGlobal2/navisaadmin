@@ -59,7 +59,7 @@ const EligibilityAssessment = () => {
                   Framework Settings
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-4xl">
+              <DialogContent className="max-w-3xl h-[90vh]">
                 <DialogHeader>
                   <DialogTitle>Assessment Framework Settings</DialogTitle>
                 </DialogHeader>

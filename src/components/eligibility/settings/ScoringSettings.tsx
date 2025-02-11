@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,10 +59,10 @@ export const ScoringSettings = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" role="region" aria-label="Scoring Settings">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div>
+          <div role="region" aria-label="Section weights">
             <h3 className="text-lg font-medium mb-6">Section Weights</h3>
             <div className="space-y-6">
               {Object.entries(form.getValues().sections).map(([key, value]) => (
@@ -75,7 +74,7 @@ export const ScoringSettings = () => {
                     <FormItem className="space-y-2">
                       <div className="flex items-center justify-between">
                         <FormLabel className="text-base capitalize">{key}</FormLabel>
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-medium" aria-live="polite">
                           {field.value}%
                         </span>
                       </div>
@@ -86,6 +85,7 @@ export const ScoringSettings = () => {
                           max={100}
                           step={5}
                           className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
+                          aria-label={`${key} weight percentage`}
                         />
                       </FormControl>
                     </FormItem>
@@ -95,9 +95,9 @@ export const ScoringSettings = () => {
             </div>
           </div>
 
-          <Separator />
+          <Separator role="separator" />
 
-          <div>
+          <div role="region" aria-label="Score thresholds">
             <h3 className="text-lg font-medium mb-4">Score Thresholds</h3>
             <div className="space-y-4 rounded-lg border p-4">
               <FormField

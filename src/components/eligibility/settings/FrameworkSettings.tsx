@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormSettings } from "./FormSettings";
 import { ScoringSettings } from "./ScoringSettings";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const FrameworkSettings = () => {
   return (
@@ -13,12 +14,14 @@ export const FrameworkSettings = () => {
           <TabsTrigger value="form">Assessment Form</TabsTrigger>
           <TabsTrigger value="scoring">Scoring Framework</TabsTrigger>
         </TabsList>
-        <TabsContent value="form" className="mt-6">
-          <FormSettings />
-        </TabsContent>
-        <TabsContent value="scoring" className="mt-6">
-          <ScoringSettings />
-        </TabsContent>
+        <ScrollArea className="h-[70vh] pr-4" aria-label="Settings content">
+          <TabsContent value="form" className="mt-6">
+            <FormSettings />
+          </TabsContent>
+          <TabsContent value="scoring" className="mt-6">
+            <ScoringSettings />
+          </TabsContent>
+        </ScrollArea>
       </Tabs>
     </Card>
   );

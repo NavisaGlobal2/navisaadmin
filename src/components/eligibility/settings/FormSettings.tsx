@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,14 +66,16 @@ export const FormSettings = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
+    <div className="space-y-8" role="region" aria-label="Form Settings">
+      <nav aria-label="Form sections navigation">
         <h3 className="text-lg font-medium mb-4">Form Sections</h3>
         <div className="grid gap-3">
           {sections.map((section, index) => (
             <div 
               key={index} 
               className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+              role="region"
+              aria-label={`${section.title} section settings`}
             >
               <div>
                 <h4 className="font-medium">{section.title}</h4>
@@ -88,13 +89,13 @@ export const FormSettings = () => {
             </div>
           ))}
         </div>
-      </div>
+      </nav>
 
-      <Separator />
+      <Separator role="separator" />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
+          <div className="space-y-4" role="region" aria-label="General settings">
             <FormField
               control={form.control}
               name="allowGuestSubmissions"
