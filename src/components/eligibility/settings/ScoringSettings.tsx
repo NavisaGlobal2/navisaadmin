@@ -17,9 +17,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { scoringSchema, type ScoringValues, visaRequirements, visaTypeSchema } from "./scoring-schema";
 
+type VisaType = typeof visaTypeSchema._type;
+
 export const ScoringSettings = () => {
   const { toast } = useToast();
-  const [selectedVisa, setSelectedVisa] = useState(visaTypeSchema.enum.UK_GLOBAL_TALENT);
+  const [selectedVisa, setSelectedVisa] = useState<VisaType>("UK_GLOBAL_TALENT");
   
   const form = useForm<ScoringValues>({
     resolver: zodResolver(scoringSchema),
@@ -66,9 +68,9 @@ export const ScoringSettings = () => {
               <FormItem>
                 <FormLabel>Visa Type</FormLabel>
                 <Select
-                  onValueChange={(value) => {
+                  onValueChange={(value: VisaType) => {
                     field.onChange(value);
-                    setSelectedVisa(value as keyof typeof visaRequirements);
+                    setSelectedVisa(value);
                   }}
                   defaultValue={field.value}
                 >
