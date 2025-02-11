@@ -46,15 +46,15 @@ const EligibilityAssessment = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">AI Eligibility Assessment</h1>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => {}}>
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="text-xl md:text-2xl font-semibold">AI Eligibility Assessment</h1>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button variant="outline" onClick={() => {}} className="flex-1 sm:flex-none">
               <History className="w-4 h-4 mr-2" />
               Assessment History
             </Button>
-            <Button onClick={handleAIParamsClick}>
+            <Button onClick={handleAIParamsClick} className="flex-1 sm:flex-none">
               <Brain className="w-4 h-4 mr-2" />
               Adjust AI Parameters
             </Button>
@@ -62,7 +62,7 @@ const EligibilityAssessment = () => {
         </div>
 
         {/* Search and Filter Bar */}
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
@@ -72,40 +72,42 @@ const EligibilityAssessment = () => {
               className="w-full pl-10"
             />
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
-                <ChevronDown className="w-4 h-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => handleFilterChange("all")}>
-                All Assessments
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleFilterChange("pending")}>
-                Pending Review
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleFilterChange("approved")}>
-                Approved
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleFilterChange("rejected")}>
-                Rejected
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleFilterChange("manual")}>
-                Manual Adjustments
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant="outline">
-            <Settings className="w-4 h-4 mr-2" />
-            Framework Settings
-          </Button>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex-1 sm:flex-none">
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filter
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuItem onClick={() => handleFilterChange("all")}>
+                  All Assessments
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleFilterChange("pending")}>
+                  Pending Review
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleFilterChange("approved")}>
+                  Approved
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleFilterChange("rejected")}>
+                  Rejected
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleFilterChange("manual")}>
+                  Manual Adjustments
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="outline" className="flex-1 sm:flex-none">
+              <Settings className="w-4 h-4 mr-2" />
+              Framework Settings
+            </Button>
+          </div>
         </div>
 
         {/* Statistics Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {[
             { title: "Success Rate", value: "78%", icon: ThumbsUp, color: "green" },
             { title: "Average Score", value: "82/100", icon: Percent, color: "blue" },
@@ -126,7 +128,7 @@ const EligibilityAssessment = () => {
         </div>
 
         {/* Recent Assessments and Criteria */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle>Recent Assessments</CardTitle>
@@ -155,13 +157,13 @@ const EligibilityAssessment = () => {
                   time: "1 day ago"
                 }
               ].map((assessment, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer gap-2">
                   <div>
                     <h4 className="font-medium">{assessment.name}</h4>
                     <p className="text-sm text-gray-400">{assessment.visaType}</p>
                     <p className="text-sm text-gray-400">{assessment.recommendation}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right w-full sm:w-auto">
                     <span className="text-sm font-medium">{assessment.score}/100</span>
                     <p className="text-sm text-gray-400">{assessment.time}</p>
                   </div>
