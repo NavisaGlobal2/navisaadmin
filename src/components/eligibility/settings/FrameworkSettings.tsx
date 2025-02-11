@@ -13,10 +13,10 @@ export const FrameworkSettings = () => {
           <TabsTrigger value="form">Assessment Form</TabsTrigger>
           <TabsTrigger value="scoring">Scoring Framework</TabsTrigger>
         </TabsList>
-        <TabsContent value="form">
+        <TabsContent value="form" className="mt-6">
           <FormSettings />
         </TabsContent>
-        <TabsContent value="scoring">
+        <TabsContent value="scoring" className="mt-6">
           <ScoringSettings />
         </TabsContent>
       </Tabs>

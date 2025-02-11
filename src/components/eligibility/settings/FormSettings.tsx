@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   allowGuestSubmissions: z.boolean(),
@@ -66,96 +67,99 @@ export const FormSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Form Sections</h3>
-        <div className="grid gap-4 md:grid-cols-2">
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-lg font-medium mb-4">Form Sections</h3>
+        <div className="grid gap-3">
           {sections.map((section, index) => (
-            <Card key={index} className="bg-white/5">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {section.title}
-                </CardTitle>
-                <Badge variant={section.required ? "default" : "secondary"}>
-                  {section.required ? "Required" : "Optional"}
-                </Badge>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-gray-400">
-                  Manage {section.title.toLowerCase()} section settings
+            <div 
+              key={index} 
+              className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors"
+            >
+              <div>
+                <h4 className="font-medium">{section.title}</h4>
+                <p className="text-sm text-muted-foreground">
+                  Configure {section.title.toLowerCase()} requirements
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+              <Badge variant={section.required ? "default" : "secondary"}>
+                {section.required ? "Required" : "Optional"}
+              </Badge>
+            </div>
           ))}
         </div>
       </div>
 
+      <Separator />
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="allowGuestSubmissions"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Guest Submissions</FormLabel>
-                  <FormDescription>
-                    Allow non-authenticated users to submit assessments
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="allowGuestSubmissions"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg p-4 border">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Guest Submissions</FormLabel>
+                    <FormDescription>
+                      Allow non-authenticated users to submit assessments
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="enableProgressSaving"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Progress Saving</FormLabel>
-                  <FormDescription>
-                    Enable users to save their progress and continue later
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="enableProgressSaving"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg p-4 border">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Progress Saving</FormLabel>
+                    <FormDescription>
+                      Enable users to save their progress and continue later
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="maxFileSize"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Max File Size (MB)</FormLabel>
-                  <FormDescription>
-                    Maximum allowed size for CV uploads
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    className="w-20"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="maxFileSize"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg p-4 border">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Max File Size (MB)</FormLabel>
+                    <FormDescription>
+                      Maximum allowed size for CV uploads
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      className="w-24"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button type="submit" className="w-full">
             Save Form Settings

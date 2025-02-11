@@ -15,7 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const scoringSchema = z.object({
   sections: z.object({
@@ -59,22 +60,22 @@ export const ScoringSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div>
-            <h3 className="text-lg font-medium mb-4">Section Weights</h3>
-            <div className="space-y-4">
+            <h3 className="text-lg font-medium mb-6">Section Weights</h3>
+            <div className="space-y-6">
               {Object.entries(form.getValues().sections).map(([key, value]) => (
                 <FormField
                   key={key}
                   control={form.control}
                   name={`sections.${key}` as any}
                   render={({ field }) => (
-                    <FormItem>
-                      <div className="flex justify-between mb-2">
-                        <FormLabel className="capitalize">{key}</FormLabel>
-                        <span className="text-sm text-gray-400">
+                    <FormItem className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <FormLabel className="text-base capitalize">{key}</FormLabel>
+                        <span className="text-sm font-medium">
                           {field.value}%
                         </span>
                       </div>
@@ -84,6 +85,7 @@ export const ScoringSettings = () => {
                           onValueChange={([value]) => field.onChange(value)}
                           max={100}
                           step={5}
+                          className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
                         />
                       </FormControl>
                     </FormItem>
@@ -93,57 +95,59 @@ export const ScoringSettings = () => {
             </div>
           </div>
 
+          <Separator />
+
           <div>
             <h3 className="text-lg font-medium mb-4">Score Thresholds</h3>
-            <Card className="bg-white/5">
-              <CardContent className="pt-6 space-y-4">
-                <FormField
-                  control={form.control}
-                  name="thresholds.minimum"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between">
-                      <div>
-                        <FormLabel>Minimum Score</FormLabel>
-                        <FormDescription>
-                          Minimum score required for eligibility
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                          className="w-20"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+            <div className="space-y-4 rounded-lg border p-4">
+              <FormField
+                control={form.control}
+                name="thresholds.minimum"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between gap-4">
+                    <div>
+                      <FormLabel className="text-base">Minimum Score</FormLabel>
+                      <FormDescription>
+                        Minimum score required for eligibility
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-24"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="thresholds.target"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between">
-                      <div>
-                        <FormLabel>Target Score</FormLabel>
-                        <FormDescription>
-                          Ideal score for strong candidates
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                          className="w-20"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+              <Separator className="my-4" />
+
+              <FormField
+                control={form.control}
+                name="thresholds.target"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between gap-4">
+                    <div>
+                      <FormLabel className="text-base">Target Score</FormLabel>
+                      <FormDescription>
+                        Ideal score for strong candidates
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        className="w-24"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
           <Button type="submit" className="w-full">
