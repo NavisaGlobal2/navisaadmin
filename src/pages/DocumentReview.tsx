@@ -9,60 +9,22 @@ import { DocumentRequirements } from "@/components/documents/DocumentRequirement
 import { DocumentValidation } from "@/components/documents/DocumentValidation";
 import { useToast } from "@/hooks/use-toast";
 import { Document, DocumentStatus } from "@/types/application";
+import { mockApplications } from "@/data/mockApplications";
 
 const DocumentReview = () => {
   const { toast } = useToast();
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
 
-  const recentDocuments: Document[] = [
-    {
-      name: "Passport.pdf",
-      type: "Identity Document",
-      status: "Verified" as DocumentStatus,
-      uploadedBy: "John Doe",
-      time: "2 hours ago",
-      version: 1,
-      validationResults: {
-        isComplete: true,
-        isAccurate: true,
-        aiConfidenceScore: 98,
-      },
-      history: [
-        {
-          version: 1,
-          uploadedAt: "2024-03-15T10:00:00",
-          status: "Verified" as DocumentStatus,
-        }
-      ]
-    },
-    {
-      name: "BankStatement.pdf",
-      type: "Financial Document",
-      status: "Pending" as DocumentStatus,
-      uploadedBy: "Jane Smith",
-      time: "5 hours ago",
-      version: 2,
-      validationResults: {
-        isComplete: false,
-        isAccurate: true,
-        aiConfidenceScore: 85,
-        suggestions: ["Missing transaction history for January 2024"]
-      },
-      history: [
-        {
-          version: 2,
-          uploadedAt: "2024-03-15T09:00:00",
-          status: "Pending" as DocumentStatus,
-        },
-        {
-          version: 1,
-          uploadedAt: "2024-03-14T14:00:00",
-          status: "Rejected" as DocumentStatus,
-          notes: "Incomplete statement"
-        }
-      ]
-    }
-  ];
+  // Get all documents from all applications
+  const allDocuments = mockApplications.reduce((docs, app) => {
+    return [...docs, ...app.documents];
+  }, [] as Document[]);
+
+  // Stats calculation from actual data
+  const totalDocuments = allDocuments.length;
+  const verifiedDocuments = allDocuments.filter(doc => doc.status === "Verified").length;
+  const rejectedDocuments = allDocuments.filter(doc => doc.status === "Rejected").length;
+  const pendingDocuments = allDocuments.filter(doc => doc.status === "Pending").length;
 
   const documentCategories = [
     {
@@ -118,21 +80,21 @@ const DocumentReview = () => {
         </div>
 
         <DocumentStats
-          totalDocuments={234}
-          approvedDocuments={156}
-          rejectedDocuments={45}
-          pendingDocuments={33}
+          totalDocuments={totalDocuments}
+          approvedDocuments={verifiedDocuments}
+          rejectedDocuments={rejectedDocuments}
+          pendingDocuments={pendingDocuments}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <RecentDocuments 
-              documents={recentDocuments}
+              documents={allDocuments}
             />
             <DocumentRequirements categories={documentCategories} />
           </div>
           <div className="space-y-6">
-            {recentDocuments.map((doc, index) => (
+            {allDocuments.map((doc, index) => (
               <DocumentValidation
                 key={index}
                 document={doc}
