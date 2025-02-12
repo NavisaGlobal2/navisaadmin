@@ -16,6 +16,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { NotificationCenter } from "./notifications/NotificationCenter";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -117,6 +118,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-6 w-full overflow-auto">
+        {/* Top bar with notifications */}
+        <div className="flex justify-end mb-6">
+          <NotificationCenter />
+        </div>
         {children}
       </main>
     </div>

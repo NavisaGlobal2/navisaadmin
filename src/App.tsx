@@ -10,6 +10,8 @@ import ApplicationProcessing from "./pages/ApplicationProcessing";
 import EligibilityAssessment from "./pages/EligibilityAssessment";
 import DocumentReview from "./pages/DocumentReview";
 import Consultations from "./pages/Consultations";
+import SecurityPage from "./pages/SecurityPage";
+import AccountPage from "./pages/AccountPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,8 +31,8 @@ const App = () => (
           <Route path="/consultations/*" element={<Consultations />} />
           <Route path="/notifications" element={<Index />} />
           <Route path="/settings" element={<Index />} />
-          <Route path="/security" element={<Index />} />
-          <Route path="/account" element={<Index />} />
+          <Route path="/security" element={<SecurityPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
