@@ -33,11 +33,13 @@ export const FormSection = ({ index, section, control }: FormSectionProps) => {
             <FormLabel className="text-base font-medium cursor-pointer">
               {section.title}
             </FormLabel>
-            <Switch
-              checked={field.value}
-              onCheckedChange={field.onChange}
-              aria-label={`Enable ${section.title} section`}
-            />
+            <FormControl>
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                aria-label={`Enable ${section.title} section`}
+              />
+            </FormControl>
           </div>
         )}
       />
