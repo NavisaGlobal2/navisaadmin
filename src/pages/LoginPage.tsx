@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -163,7 +164,7 @@ const LoginPage = () => {
       <div className="hidden md:block w-1/2 bg-primary relative">
         <img 
           alt="Login illustration" 
-          src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739981795/pexels-amar-30792659_w4yn8i.jpg" 
+          src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739983553/pexels-amar-30792663_kuqhnx.jpg" 
           className="w-full h-full object-cover absolute inset-0"
         />
       </div>
