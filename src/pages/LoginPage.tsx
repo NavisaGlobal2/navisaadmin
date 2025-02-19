@@ -151,7 +151,7 @@ const LoginPage = () => {
 
       {/* Right Side - Image */}
       <div className="hidden md:flex w-1/2 bg-primary items-center justify-center p-8">
-        <img alt="Login illustration" src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739981795/pexels-amar-30792659_w4yn8i.jpg" className="max-w-lg w-full h-auto object-contain" />
+        <img alt="Login illustration" src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739981795/pexels-amar-30792659_w4yn8i.jpg" className="max-w-lg w-full h-auto object-fill" />
       </div>
     </div>;
 };
