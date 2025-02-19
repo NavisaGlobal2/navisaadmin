@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -71,87 +72,154 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-2">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8 bg-background">
+        <div className="w-full max-w-md space-y-6 md:space-y-8">
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">
               {isLogin ? "Welcome back" : "Create account"}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               {isLogin ? "Enter your credentials to access your account" : "Enter your information to create an account"}
             </p>
           </div>
 
-          {isLogin ? <Form {...loginForm}>
-              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
-                <FormField control={loginForm.control} name="email" render={({
-              field
-            }) => <FormItem>
+          {isLogin ? (
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4 md:space-y-6">
+                <FormField
+                  control={loginForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="name@example.com" {...field} className="h-12 text-base" />
+                        <Input 
+                          placeholder="name@example.com" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <FormField control={loginForm.control} name="password" render={({
-              field
-            }) => <FormItem>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Enter your password" {...field} className="h-12 text-base" />
+                        <Input 
+                          type="password" 
+                          placeholder="Enter your password" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <Button type="submit" className="w-full h-12 text-base bg-primary hover:bg-primary/90" disabled={isLoading}>
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  type="submit" 
+                  className="w-full h-10 md:h-12 text-sm md:text-base bg-primary hover:bg-primary/90" 
+                  disabled={isLoading}
+                >
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </form>
-            </Form> : <Form {...registerForm}>
-              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-6">
-                <FormField control={registerForm.control} name="name" render={({
-              field
-            }) => <FormItem>
+            </Form>
+          ) : (
+            <Form {...registerForm}>
+              <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4 md:space-y-6">
+                <FormField
+                  control={registerForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your name" {...field} className="h-12 text-base" />
+                        <Input 
+                          placeholder="Enter your name" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <FormField control={registerForm.control} name="email" render={({
-              field
-            }) => <FormItem>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="name@example.com" {...field} className="h-12 text-base" />
+                        <Input 
+                          placeholder="name@example.com" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <FormField control={registerForm.control} name="password" render={({
-              field
-            }) => <FormItem>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Create a password" {...field} className="h-12 text-base" />
+                        <Input 
+                          type="password" 
+                          placeholder="Create a password" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <FormField control={registerForm.control} name="confirmPassword" render={({
-              field
-            }) => <FormItem>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Confirm your password" {...field} className="h-12 text-base" />
+                        <Input 
+                          type="password" 
+                          placeholder="Confirm your password" 
+                          {...field} 
+                          className="h-10 md:h-12 text-sm md:text-base" 
+                        />
                       </FormControl>
                       <FormMessage />
-                    </FormItem>} />
-                <Button type="submit" className="w-full h-12 text-base bg-primary hover:bg-primary/90" disabled={isLoading}>
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  type="submit" 
+                  className="w-full h-10 md:h-12 text-sm md:text-base bg-primary hover:bg-primary/90" 
+                  disabled={isLoading}
+                >
                   {isLoading ? "Creating account..." : "Create account"}
                 </Button>
               </form>
-            </Form>}
+            </Form>
+          )}
 
           <div className="text-center">
-            <Button variant="link" className="text-base" onClick={() => setIsLogin(!isLogin)}>
+            <Button 
+              variant="link" 
+              className="text-sm md:text-base" 
+              onClick={() => setIsLogin(!isLogin)}
+            >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </Button>
           </div>
