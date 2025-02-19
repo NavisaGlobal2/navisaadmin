@@ -22,7 +22,7 @@ import { AssignExpertModal } from "./AssignExpertModal";
 
 interface UsersTableProps {
   users: User[];
-  onAssignExpert: (userId: string) => void;
+  onAssignExpert: (userId: string, expertName: string) => void;
   onSuspendUser: (userId: string) => void;
   onActivateUser: (userId: string) => void;
 }
@@ -37,7 +37,7 @@ export const UsersTable = ({
 
   const handleAssignExpert = (expertName: string) => {
     if (selectedUserId) {
-      onAssignExpert(selectedUserId);
+      onAssignExpert(selectedUserId, expertName);
       setSelectedUserId(null);
     }
   };

@@ -16,10 +16,10 @@ const UserManagement = () => {
   const [visaFilter, setVisaFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const handleAssignExpert = (userId: string) => {
+  const handleAssignExpert = (userId: string, expertName: string) => {
     toast({
-      title: "Expert Assignment",
-      description: `Assigning expert to user ${userId}`,
+      title: "Expert Assigned",
+      description: `Expert ${expertName} has been assigned to user ${userId}`,
     });
   };
 
