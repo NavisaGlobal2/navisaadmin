@@ -4,6 +4,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
 import Index from "./pages/Index";
 import UserManagement from "./pages/UserManagement";
 import ApplicationProcessing from "./pages/ApplicationProcessing";
@@ -18,25 +21,82 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/users/*" element={<UserManagement />} />
-          <Route path="/applications/*" element={<ApplicationProcessing />} />
-          <Route path="/eligibility/*" element={<EligibilityAssessment />} />
-          <Route path="/documents/*" element={<DocumentReview />} />
-          <Route path="/consultations/*" element={<Consultations />} />
-          <Route path="/notifications" element={<Index />} />
-          <Route path="/settings" element={<Index />} />
-          <Route path="/security" element={<SecurityPage />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/*"
+              element={
+                <ProtectedRoute>
+                  <UserManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/applications/*"
+              element={
+                <ProtectedRoute>
+                  <ApplicationProcessing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/eligibility/*"
+              element={
+                <ProtectedRoute>
+                  <EligibilityAssessment />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/documents/*"
+              element={
+                <ProtectedRoute>
+                  <DocumentReview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/consultations/*"
+              element={
+                <ProtectedRoute>
+                  <Consultations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/security"
+              element={
+                <ProtectedRoute>
+                  <SecurityPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
