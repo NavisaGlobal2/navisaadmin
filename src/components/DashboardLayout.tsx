@@ -17,10 +17,12 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { NotificationCenter } from "./notifications/NotificationCenter";
+import { useAuth } from "@/context/AuthContext"; // Add this import
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { logout } = useAuth(); // Add this line
 
   return (
     <div className="min-h-screen bg-nav text-nav-foreground flex">
@@ -102,7 +104,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           </ul>
         </nav>
 
-        <button className="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors duration-200">
+        <button 
+          onClick={logout}
+          className="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors duration-200"
+        >
           <LogOut className="w-5 h-5" />
           <span>Sign out</span>
         </button>
