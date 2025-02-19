@@ -69,7 +69,8 @@ const LoginPage = () => {
     }
   };
 
-  return <div className="min-h-screen flex flex-col md:flex-row">
+  return (
+    <div className="min-h-screen flex flex-col md:flex-row">
       <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-8">
@@ -157,14 +158,17 @@ const LoginPage = () => {
         </div>
       </div>
 
-      <div className="hidden md:block w-1/2 bg-primary relative">
-        <img 
-          alt="Login illustration" 
-          src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739981795/pexels-amar-30792659_w4yn8i.jpg" 
-          className="w-full h-full object-cover absolute inset-0"
-        />
+      <div className="hidden md:flex w-1/2">
+        <div className="relative w-full h-screen">
+          <img 
+            alt="Login illustration" 
+            src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739981795/pexels-amar-30792659_w4yn8i.jpg"
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default LoginPage;
