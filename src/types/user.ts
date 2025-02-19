@@ -1,11 +1,12 @@
 
-export type User = {
+export interface User {
   id: string;
   name: string;
   email: string;
   visaType: string;
-  status: "Active" | "Pending" | "Suspended";
+  status: string;
   expert: string;
   country: string;
   lastUpdated: string;
-};
+  role?: string;
+}

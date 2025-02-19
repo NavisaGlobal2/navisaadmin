@@ -2,19 +2,36 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { UserFilters } from "@/components/users/UserFilters";
 import { UsersTable } from "@/components/users/UsersTable";
 import { mockUsers } from "@/data/mockUsers";
 import { User } from "@/types/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const UserManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [visaFilter, setVisaFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
 
   const handleAssignExpert = (userId: string, expertName: string) => {
     toast({
@@ -36,6 +53,21 @@ const UserManagement = () => {
       title: "User Activated",
       description: `User ${userId} has been activated`,
     });
+  };
+
+  const handleManageRoles = (user: User) => {
+    setSelectedUser(user);
+    setIsRoleDialogOpen(true);
+  };
+
+  const handleRoleChange = (role: string) => {
+    if (!selectedUser) return;
+
+    toast({
+      title: "Role Updated",
+      description: `${selectedUser.name}'s role has been updated to ${role}`,
+    });
+    setIsRoleDialogOpen(false);
   };
 
   const filteredUsers = mockUsers.filter((user: User) => {
@@ -73,7 +105,7 @@ const UserManagement = () => {
           <div>
             <h1 className="text-2xl font-semibold">User Management</h1>
             <p className="text-sm text-gray-400 mt-1">
-              Manage user accounts and applications
+              Manage user accounts and roles
             </p>
           </div>
           <Button size="default" className="w-full sm:w-auto">
@@ -124,9 +156,37 @@ const UserManagement = () => {
               onAssignExpert={handleAssignExpert}
               onSuspendUser={handleSuspendUser}
               onActivateUser={handleActivateUser}
+              onManageRoles={handleManageRoles}
             />
           </CardContent>
         </Card>
+
+        {/* Role Management Dialog */}
+        <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Manage User Role</DialogTitle>
+              <DialogDescription>
+                Change the role for {selectedUser?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select onValueChange={handleRoleChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="moderator">Moderator</SelectItem>
+                    <SelectItem value="user">User</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

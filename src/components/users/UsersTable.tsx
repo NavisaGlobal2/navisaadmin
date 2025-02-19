@@ -1,6 +1,4 @@
 
-import { User } from "@/types/user";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -9,22 +7,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Shield, UserCheck, UserX } from "lucide-react";
-import { useState } from "react";
-import { AssignExpertModal } from "./AssignExpertModal";
+import { User } from "@/types/user";
+import { Shield, UserCheck, UserX } from "lucide-react";
 
 interface UsersTableProps {
   users: User[];
   onAssignExpert: (userId: string, expertName: string) => void;
   onSuspendUser: (userId: string) => void;
   onActivateUser: (userId: string) => void;
+  onManageRoles: (user: User) => void;
 }
 
 export const UsersTable = ({
@@ -32,104 +24,63 @@ export const UsersTable = ({
   onAssignExpert,
   onSuspendUser,
   onActivateUser,
+  onManageRoles,
 }: UsersTableProps) => {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  const handleAssignExpert = (expertName: string) => {
-    if (selectedUserId) {
-      onAssignExpert(selectedUserId, expertName);
-      setSelectedUserId(null);
-    }
-  };
-
   return (
-    <>
-      <div className="relative w-full overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[200px] whitespace-normal">Name</TableHead>
-              <TableHead className="w-[250px] whitespace-normal">Email</TableHead>
-              <TableHead className="w-[150px] whitespace-normal">
-                Visa Type
-              </TableHead>
-              <TableHead className="w-[120px] whitespace-normal">Status</TableHead>
-              <TableHead className="w-[180px] whitespace-normal">
-                Expert Assigned
-              </TableHead>
-              <TableHead className="w-[140px] whitespace-normal">Country</TableHead>
-              <TableHead className="w-[150px] whitespace-normal">
-                Last Updated
-              </TableHead>
-              <TableHead className="w-[100px] text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id} className="hover:bg-white/5">
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                <TableCell className="text-muted-foreground">{user.visaType}</TableCell>
-                <TableCell>
-                  <Badge variant={
-                    user.status === "Active" ? "default" :
-                    user.status === "Pending" ? "secondary" :
-                    "destructive"
-                  }
-                  className="whitespace-nowrap"
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Visa Type</TableHead>
+          <TableHead>Country</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Expert</TableHead>
+          <TableHead>Last Updated</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {users.map((user) => (
+          <TableRow key={user.id}>
+            <TableCell>{user.name}</TableCell>
+            <TableCell>{user.email}</TableCell>
+            <TableCell>{user.visaType}</TableCell>
+            <TableCell>{user.country}</TableCell>
+            <TableCell>{user.status}</TableCell>
+            <TableCell>{user.expert}</TableCell>
+            <TableCell>{user.lastUpdated}</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onManageRoles(user)}
+                >
+                  <Shield className="h-4 w-4" />
+                </Button>
+                {user.status === "Active" ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onSuspendUser(user.id)}
                   >
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">{user.expert}</TableCell>
-                <TableCell className="text-muted-foreground">{user.country}</TableCell>
-                <TableCell className="text-muted-foreground">{user.lastUpdated}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[200px]">
-                      <DropdownMenuItem 
-                        onClick={() => setSelectedUserId(user.id)}
-                        className="cursor-pointer"
-                      >
-                        <UserCheck className="mr-2 h-4 w-4" />
-                        <span>Assign Expert</span>
-                      </DropdownMenuItem>
-                      {user.status !== "Suspended" ? (
-                        <DropdownMenuItem 
-                          onClick={() => onSuspendUser(user.id)}
-                          className="text-destructive cursor-pointer"
-                        >
-                          <UserX className="mr-2 h-4 w-4" />
-                          <span>Suspend User</span>
-                        </DropdownMenuItem>
-                      ) : (
-                        <DropdownMenuItem 
-                          onClick={() => onActivateUser(user.id)}
-                          className="cursor-pointer"
-                        >
-                          <Shield className="mr-2 h-4 w-4" />
-                          <span>Activate User</span>
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <AssignExpertModal 
-        isOpen={!!selectedUserId}
-        onClose={() => setSelectedUserId(null)}
-        onAssign={handleAssignExpert}
-      />
-    </>
+                    <UserX className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onActivateUser(user.id)}
+                  >
+                    <UserCheck className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 };
