@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -8,12 +7,10 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters")
 });
-
 const registerSchema = loginSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters"),
   confirmPassword: z.string()
@@ -21,10 +18,8 @@ const registerSchema = loginSchema.extend({
   message: "Passwords don't match",
   path: ["confirmPassword"]
 });
-
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
-
 const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const {
@@ -33,7 +28,6 @@ const LoginPage = () => {
     isLoading
   } = useAuth();
   const navigate = useNavigate();
-
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,7 +35,6 @@ const LoginPage = () => {
       password: ""
     }
   });
-
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -51,7 +44,6 @@ const LoginPage = () => {
       name: ""
     }
   });
-
   const onLoginSubmit = async (data: LoginFormValues) => {
     try {
       await login(data.email, data.password);
@@ -60,7 +52,6 @@ const LoginPage = () => {
       // Error is handled by the AuthContext
     }
   };
-
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     try {
       await register(data.email, data.password, data.name);
@@ -69,9 +60,7 @@ const LoginPage = () => {
       // Error is handled by the AuthContext
     }
   };
-
-  return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+  return <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Side - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8">
@@ -161,15 +150,9 @@ const LoginPage = () => {
       </div>
 
       {/* Right Side - Image */}
-      <div className="hidden md:block w-1/2 bg-primary relative">
-        <img 
-          alt="Login illustration" 
-          src="https://res.cloudinary.com/dz0b5eqof/image/upload/v1739983553/pexels-amar-30792663_kuqhnx.jpg" 
-          className="w-full h-full object-cover absolute inset-0"
-        />
+      <div className="hidden md:block w-1/2 bg-primary relative rounded-full">
+        
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default LoginPage;
