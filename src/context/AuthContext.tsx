@@ -8,7 +8,7 @@ const DUMMY_USERS = [
   {
     id: "1",
     email: "admin@example.com",
-    password: "admin123", // In a real app, this would be hashed
+    password: "admin123",
     name: "Admin User",
     role: "admin" as const,
   },
@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is logged in
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -37,10 +36,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const register = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
       // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Check if user already exists
+      const userExists = DUMMY_USERS.some((u) => u.email === email);
+      if (userExists) {
+        throw new Error("User already exists");
+      }
+
+      // Create new user
+      const newUser = {
+        id: (DUMMY_USERS.length + 1).toString(),
+        email,
+        password,
+        name,
+        role: "user" as const,
+      };
+
+      DUMMY_USERS.push(newUser);
+
+      // Log in the user after registration
+      const { password: _, ...userWithoutPassword } = newUser;
+      setUser(userWithoutPassword);
+      localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+
+      toast({
+        title: "Registration successful",
+        description: "Welcome to Navisa Admin!",
+      });
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const foundUser = DUMMY_USERS.find(
@@ -81,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
