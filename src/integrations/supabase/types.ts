@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      application_trackings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          email: string
+          id: string
+          stage: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          stage?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          stage?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       client_admin_assignments: {
         Row: {
           client_admin_id: string
@@ -163,6 +193,7 @@ export type Database = {
           status: string | null
           updated_at: string
           user_id: string | null
+          visa_type: Database["public"]["Enums"]["visa_name"] | null
         }
         Insert: {
           created_at?: string
@@ -173,6 +204,7 @@ export type Database = {
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          visa_type?: Database["public"]["Enums"]["visa_name"] | null
         }
         Update: {
           created_at?: string
@@ -183,6 +215,7 @@ export type Database = {
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          visa_type?: Database["public"]["Enums"]["visa_name"] | null
         }
         Relationships: []
       }
@@ -295,6 +328,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string | null
           first_name: string | null
           id: string
           last_name: string | null
@@ -304,6 +338,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id: string
           last_name?: string | null
@@ -313,6 +348,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null

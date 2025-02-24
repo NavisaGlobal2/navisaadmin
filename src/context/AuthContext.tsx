@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { User, AuthContextType } from "@/types/auth";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/services/api";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -12,94 +12,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          name: session.user.user_metadata.name || '',
-          role: session.user.user_metadata.role || 'user'
-        });
-      }
-      setIsLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          name: session.user.user_metadata.name || '',
-          role: session.user.user_metadata.role || 'user'
-        });
-      } else {
-        setUser(null);
-      }
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const register = async (email: string, password: string, name: string) => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            role: 'user'
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        toast({
-          title: "Registration successful",
-          description: "Please check your email to verify your account.",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
-      });
-      throw error;
-    } finally {
-      setIsLoading(false);
+    // Check for token and user data in localStorage
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("userData");
+    
+    if (token && userData) {
+      setUser(JSON.parse(userData));
     }
-  };
+    
+    setIsLoading(false);
+  }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          email: data.user.email!,
-          name: data.user.user_metadata.name || '',
-          role: data.user.user_metadata.role || 'user'
-        });
+      const response = await adminApi.login(email, password);
+      
+      if (response.data) {
+        const { token, user: userData } = response.data;
         
+        // Save token and user data
+        localStorage.setItem("token", token);
+        localStorage.setItem("userData", JSON.stringify(userData));
+        
+        setUser({
+          id: userData.sub,
+          email: userData.email,
+          name: userData.email.split("@")[0], // You might want to adjust this
+          role: "admin" // You might want to adjust this based on your needs
+        });
+
         toast({
           title: "Login successful",
-          description: `Welcome back, ${data.user.user_metadata.name || 'user'}!`,
+          description: "Welcome back!",
         });
       }
     } catch (error) {
@@ -114,12 +59,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const register = async (email: string, password: string, name: string) => {
+    setIsLoading(true);
+    try {
+      const response = await adminApi.createClientAdmin({
+        email,
+        password,
+        first_name: name.split(" ")[0],
+        last_name: name.split(" ")[1] || "",
+      });
+
+      toast({
+        title: "Registration successful",
+        description: "Admin account created successfully.",
+      });
+
+      return response;
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      localStorage.removeItem("token");
+      localStorage.removeItem("userData");
       setUser(null);
+      
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
