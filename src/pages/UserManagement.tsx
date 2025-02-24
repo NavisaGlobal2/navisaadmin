@@ -1,12 +1,12 @@
 
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { UserFilters } from "@/components/users/UserFilters";
 import { UsersTable } from "@/components/users/UsersTable";
-import { mockUsers } from "@/data/mockUsers";
 import { User } from "@/types/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -24,14 +24,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { adminApi } from "@/services/api";
 
 const UserManagement = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [visaFilter, setVisaFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+
+  // Fetch users
+  const { data: users = [], isLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const response = await adminApi.getAllUsers();
+      return response.data || [];
+    },
+  });
+
+  // Delete user mutation
+  const deleteMutation = useMutation({
+    mutationFn: (userId: string) => adminApi.deleteUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({
+        title: "User Deleted",
+        description: "The user has been successfully deleted",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete user",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleAssignExpert = (userId: string, expertName: string) => {
     toast({
@@ -70,7 +100,7 @@ const UserManagement = () => {
     setIsRoleDialogOpen(false);
   };
 
-  const filteredUsers = mockUsers.filter((user: User) => {
+  const filteredUsers = users.filter((user: User) => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -82,20 +112,30 @@ const UserManagement = () => {
   const stats = [
     {
       title: "Total Users",
-      value: mockUsers.length,
+      value: users.length,
       description: "Active users in the system",
     },
     {
       title: "Active Users",
-      value: mockUsers.filter(user => user.status === "Active").length,
+      value: users.filter(user => user.status === "Active").length,
       description: "Currently active accounts",
     },
     {
       title: "Pending Users",
-      value: mockUsers.filter(user => user.status === "Pending").length,
+      value: users.filter(user => user.status === "Pending").length,
       description: "Awaiting verification",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">Loading users...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
