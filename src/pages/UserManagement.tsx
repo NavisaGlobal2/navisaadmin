@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -35,29 +34,20 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
 
-  // Fetch users
-  const { data: users = [], isLoading } = useQuery({
+  // Fetch users with error handling
+  const { data: users = [], isLoading, error } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
+      console.log("Fetching users...");
       const response = await adminApi.getAllUsers();
-      return response.data || [];
-    },
-  });
-
-  // Delete user mutation
-  const deleteMutation = useMutation({
-    mutationFn: (userId: string) => adminApi.deleteUser(userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      toast({
-        title: "User Deleted",
-        description: "The user has been successfully deleted",
-      });
+      console.log("API Response:", response);
+      return response.data;
     },
     onError: (error) => {
+      console.error("Error fetching users:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete user",
+        description: error instanceof Error ? error.message : "Failed to fetch users",
         variant: "destructive",
       });
     },
@@ -100,29 +90,29 @@ const UserManagement = () => {
     setIsRoleDialogOpen(false);
   };
 
-  const filteredUsers = users.filter((user: User) => {
+  const filteredUsers = users ? users.filter((user: User) => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesVisa = visaFilter === "all" || user.visaType === visaFilter;
     const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     return matchesSearch && matchesVisa && matchesStatus;
-  });
+  }) : [];
 
   const stats = [
     {
       title: "Total Users",
-      value: users.length,
+      value: users?.length || 0,
       description: "Active users in the system",
     },
     {
       title: "Active Users",
-      value: users.filter(user => user.status === "Active").length,
+      value: users?.filter(user => user.status === "Active").length || 0,
       description: "Currently active accounts",
     },
     {
       title: "Pending Users",
-      value: users.filter(user => user.status === "Pending").length,
+      value: users?.filter(user => user.status === "Pending").length || 0,
       description: "Awaiting verification",
     },
   ];
@@ -132,6 +122,18 @@ const UserManagement = () => {
       <DashboardLayout>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">Loading users...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center text-red-500">
+            Error loading users. Please try again later.
+          </div>
         </div>
       </DashboardLayout>
     );
