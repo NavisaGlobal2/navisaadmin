@@ -18,6 +18,7 @@ export type Database = {
           stage: string | null
           status: string | null
           updated_at: string | null
+          visa_type: Database["public"]["Enums"]["visa_name"] | null
         }
         Insert: {
           comment?: string | null
@@ -27,6 +28,7 @@ export type Database = {
           stage?: string | null
           status?: string | null
           updated_at?: string | null
+          visa_type?: Database["public"]["Enums"]["visa_name"] | null
         }
         Update: {
           comment?: string | null
@@ -36,6 +38,7 @@ export type Database = {
           stage?: string | null
           status?: string | null
           updated_at?: string | null
+          visa_type?: Database["public"]["Enums"]["visa_name"] | null
         }
         Relationships: []
       }
@@ -104,6 +107,7 @@ export type Database = {
           email: string | null
           id: string
           personal: Json | null
+          score: Json | null
           updated_at: string | null
         }
         Insert: {
@@ -113,6 +117,7 @@ export type Database = {
           email?: string | null
           id?: string
           personal?: Json | null
+          score?: Json | null
           updated_at?: string | null
         }
         Update: {
@@ -122,6 +127,7 @@ export type Database = {
           email?: string | null
           id?: string
           personal?: Json | null
+          score?: Json | null
           updated_at?: string | null
         }
         Relationships: []
@@ -415,18 +421,21 @@ export type Database = {
         Row: {
           created_at: string
           criteras: Json | null
+          doc_criteria: string[] | null
           id: string
           visa_name: string
         }
         Insert: {
           created_at?: string
           criteras?: Json | null
+          doc_criteria?: string[] | null
           id?: string
           visa_name: string
         }
         Update: {
           created_at?: string
           criteras?: Json | null
+          doc_criteria?: string[] | null
           id?: string
           visa_name?: string
         }

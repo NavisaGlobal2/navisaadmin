@@ -1,21 +1,21 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/context/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import LoginPage from "./pages/LoginPage";
-import Index from "./pages/Index";
-import UserManagement from "./pages/UserManagement";
-import ApplicationProcessing from "./pages/ApplicationProcessing";
-import EligibilityAssessment from "./pages/EligibilityAssessment";
-import DocumentReview from "./pages/DocumentReview";
-import Consultations from "./pages/Consultations";
-import SecurityPage from "./pages/SecurityPage";
-import AccountPage from "./pages/AccountPage";
-import NotFound from "./pages/NotFound";
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from '@/context/AuthContext';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import Index from './pages/Index';
+import UserManagement from './pages/UserManagement';
+import ApplicationProcessing from './pages/ApplicationProcessing';
+import EligibilityAssessment from './pages/EligibilityAssessment';
+import DocumentReview from './pages/DocumentReview';
+import Consultations from './pages/Consultations';
+import SecurityPage from './pages/SecurityPage';
+import AccountPage from './pages/AccountPage';
+import NotFound from './pages/NotFound';
+import VisaCreation from './pages/VisaCreation';
 
 const queryClient = new QueryClient();
 
@@ -27,9 +27,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path='/login' element={<LoginPage />} />
             <Route
-              path="/"
+              path='/'
               element={
                 <ProtectedRoute>
                   <Index />
@@ -37,7 +37,7 @@ const App = () => (
               }
             />
             <Route
-              path="/users/*"
+              path='/users/*'
               element={
                 <ProtectedRoute>
                   <UserManagement />
@@ -45,7 +45,7 @@ const App = () => (
               }
             />
             <Route
-              path="/applications/*"
+              path='/applications/*'
               element={
                 <ProtectedRoute>
                   <ApplicationProcessing />
@@ -53,7 +53,7 @@ const App = () => (
               }
             />
             <Route
-              path="/eligibility/*"
+              path='/eligibility/*'
               element={
                 <ProtectedRoute>
                   <EligibilityAssessment />
@@ -61,7 +61,7 @@ const App = () => (
               }
             />
             <Route
-              path="/documents/*"
+              path='/documents/*'
               element={
                 <ProtectedRoute>
                   <DocumentReview />
@@ -69,30 +69,40 @@ const App = () => (
               }
             />
             <Route
-              path="/consultations/*"
+              path='/consultations/*'
               element={
                 <ProtectedRoute>
                   <Consultations />
                 </ProtectedRoute>
               }
             />
+
             <Route
-              path="/security"
+              path='/visas'
+              element={
+                <ProtectedRoute>
+                  <VisaCreation />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/security'
               element={
                 <ProtectedRoute>
                   <SecurityPage />
                 </ProtectedRoute>
               }
             />
+
             <Route
-              path="/account"
+              path='/account'
               element={
                 <ProtectedRoute>
                   <AccountPage />
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<NotFound />} />
+            <Route path='*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
