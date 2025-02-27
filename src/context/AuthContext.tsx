@@ -45,6 +45,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           title: 'Login successful',
           description: 'Welcome back!',
         });
+      } else {
+        toast({
+          title: 'Login failed',
+          description: response.error || 'An error occurred',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       toast({

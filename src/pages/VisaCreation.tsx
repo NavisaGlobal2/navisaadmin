@@ -15,10 +15,13 @@ import { USEBVisaForm } from '@/components/visa-forms/USEBVisaForm';
 import { CanadaExpressEntryForm } from '@/components/visa-forms/CanadaExpressEntryForm';
 import { DubaiGoldenVisaForm } from '@/components/visa-forms/DubaiGoldenVisaForm';
 import { VisaCriteriaList } from '@/components/eligibility/settings/VisaCriteriaList';
+import { useAuth } from '@/context/AuthContext';
 
 const VisaCreation = () => {
   const { toast } = useToast();
   const [selectedVisaType, setSelectedVisaType] = useState<VisaType | null>(null);
+
+  const { user } = useAuth();
 
   const { data = [], isLoading } = useQuery({
     queryKey: ['visas'],
@@ -33,6 +36,8 @@ const VisaCreation = () => {
     }
     console.log(data);
   }, [isLoading]);
+
+  useEffect(() => {}, []);
 
   const getExistingVisaCriteria = (visaType: VisaType) => {
     const existingVisa = visas.find((v: any) => v.visa_name === visaType);
@@ -93,48 +98,55 @@ const VisaCreation = () => {
 
   return (
     <DashboardLayout>
-      <div className='space-y-6 p-6'>
-        <div>
-          <h1 className='text-2xl font-semibold'>Visa Criteria Management</h1>
-          <p className='text-sm text-muted-foreground mt-1'>
-            View and manage scoring criteria for different visa types
-          </p>
+      {user.role === 'super_admin' ? (
+        <div className='space-y-6 p-6'>
+          <div>
+            <h1 className='text-2xl font-semibold'>Visa Criteria Management</h1>
+            <p className='text-sm text-muted-foreground mt-1'>
+              View and manage scoring criteria for different visa types
+            </p>
+          </div>
+
+          <VisaCriteriaList />
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Create or Update Visa Criteria</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+                  <div>
+                    <Select onValueChange={handleVisaTypeChange} value={selectedVisaType || undefined}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select visa type' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {VISA_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {selectedVisaType && renderVisaForm()}
+
+                  <Button type='submit' className='w-full' disabled={createVisaMutation.isPending}>
+                    {createVisaMutation.isPending ? 'Creating...' : 'Create Visa Criteria'}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
         </div>
-
-        <VisaCriteriaList />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Create or Update Visa Criteria</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-                <div>
-                  <Select onValueChange={handleVisaTypeChange} value={selectedVisaType || undefined}>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select visa type' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {VISA_TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {selectedVisaType && renderVisaForm()}
-
-                <Button type='submit' className='w-full' disabled={createVisaMutation.isPending}>
-                  {createVisaMutation.isPending ? 'Creating...' : 'Create Visa Criteria'}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
+      ) : (
+        <div className='space-y-6 p-6'>
+          <h1>Not Authorized</h1>
+          <p>You need to be a Super Admin to do this</p>
+        </div>
+      )}
     </DashboardLayout>
   );
 };
