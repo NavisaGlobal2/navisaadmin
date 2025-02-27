@@ -1,9 +1,17 @@
+import { User } from './user';
 
-export type ApplicationStatus = "Pending Review" | "In Review" | "Approved" | "Rejected" | "More Info Needed" | "Escalated";
+export type ApplicationStatus =
+  | 'Pending Review'
+  | 'In Review'
+  | 'Approved'
+  | 'Rejected'
+  | 'More Info Needed'
+  | 'Escalated';
 
-export type DocumentStatus = "Verified" | "Pending" | "Rejected";
+export type DocumentStatus = 'Verified' | 'Pending' | 'Rejected';
 
 export interface Document {
+  id: string;
   name: string;
   type: string;
   status: DocumentStatus;
@@ -18,6 +26,8 @@ export interface Document {
     suggestions?: string[];
     aiConfidenceScore?: number;
   };
+  signedUrl: string;
+  document_type?: string;
   history?: {
     version: number;
     uploadedAt: string;
@@ -44,9 +54,14 @@ export interface Application {
   submittedAt: string;
   lastUpdated: string;
   documents: Document[];
+  user: User;
+  visa_type: string;
   assignedExpert?: string;
   internalNotes?: InternalNote[];
   nationality?: string;
+  stage?: string;
   workHistory?: string;
   eligibilityScore?: number;
+  eligibilityScores?: { education: string; experience: string; finalScore: string; achievements: string };
+  updated_at: string;
 }

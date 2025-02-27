@@ -7,25 +7,9 @@ import { adminApi } from '@/services/api';
 
 interface UsersTableProps {
   users: User[];
-  onAssignExpert: (userId: string) => void;
-  onSuspendUser: (userId: string) => void;
-  onActivateUser: (userId: string) => void;
-  onManageRoles: (user: User) => void;
-  setSelectedUserForAssignment: (user: User | null) => void;
-  setOpenAssignmentDialog: (open: boolean) => void;
-  setOpenAdminCreationDialog: (open: boolean) => void;
 }
 
-export const UsersTable = ({
-  users,
-  onAssignExpert,
-  onSuspendUser,
-  onActivateUser,
-  onManageRoles,
-  setSelectedUserForAssignment,
-  setOpenAssignmentDialog,
-  setOpenAdminCreationDialog,
-}: UsersTableProps) => {
+export const ClientsTable = ({ users }: UsersTableProps) => {
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
@@ -60,7 +44,7 @@ export const UsersTable = ({
           <TableHead>Visa Type</TableHead>
           {/* <TableHead>Country</TableHead>
           <TableHead>Status</TableHead> */}
-          <TableHead>Expert</TableHead>
+          {/* <TableHead>Expert</TableHead> */}
           <TableHead>Last Updated</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -83,10 +67,10 @@ export const UsersTable = ({
             <TableCell>{user.visa_type}</TableCell>
             {/* <TableCell>{user.country}</TableCell>
             <TableCell>{user.status}</TableCell> */}
-            <TableCell>{user?.client_admin?.name ? user.client_admin.name : 'not assigned'}</TableCell>
+            {/* <TableCell>{user?.client_admin?.name ? user.client_admin.name : 'not assigned'}</TableCell> */}
             <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
             <TableCell>
-              <div className='flex items-center gap-2'>
+              {/* <div className='flex items-center gap-2'>
                 <Button
                   variant='outline'
                   size='sm'
@@ -98,27 +82,10 @@ export const UsersTable = ({
                   <Shield className='h-4 w-4' />
                 </Button>
 
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => {
-                    setSelectedUserForAssignment(user);
-                    setOpenAssignmentDialog(true);
-                  }}
-                >
-                  <UserCheck className='h-4 w-4' />
-                </Button>
+               
 
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => {
-                    createSuperAdmin(user.email);
-                  }}
-                >
-                  <Power className='h-4 w-4' />
-                </Button>
-              </div>
+               
+              </div> */}
             </TableCell>
           </TableRow>
         ))}
