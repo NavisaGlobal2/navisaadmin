@@ -21,6 +21,7 @@ const ApplicationProcessing = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [expertFilter, setExpertFilter] = useState('all');
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
+  const [stageChange, setStageChange] = useState('all');
   const { toast } = useToast();
 
   const handleNotificationClick = () => {
@@ -30,7 +31,7 @@ const ApplicationProcessing = () => {
     });
   };
 
-  // const filteredApplications = filterApplications(applications, searchQuery, statusFilter, expertFilter);
+  const filteredApplications = filterApplications(applications, searchQuery, statusFilter, expertFilter, stageChange);
 
   return (
     <DashboardLayout>
@@ -53,14 +54,16 @@ const ApplicationProcessing = () => {
           onStatusFilterChange={setStatusFilter}
           expertFilter={expertFilter}
           onExpertFilterChange={setExpertFilter}
+          stageFilter={stageChange}
+          onStageFilterChange={setStageChange}
         />
 
-        {/* <ApplicationStats applications={filteredApplications} /> */}
+        <ApplicationStats applications={filteredApplications} />
 
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
           <div className='lg:col-span-2'>
             <ApplicationsTable
-              applications={applications}
+              applications={filteredApplications}
               onApplicationSelect={setSelectedApplication}
               onAssignExpert={handleAssignExpert}
             />

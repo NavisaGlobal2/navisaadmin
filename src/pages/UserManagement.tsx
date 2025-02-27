@@ -15,6 +15,8 @@ import { adminApi } from '@/services/api';
 import { ClientAdminsTable } from '@/components/users/ClientAdminsTable';
 import { Input } from '@/components/ui/input';
 import { ClientsTable } from '@/components/users/ClientsTable';
+import { useAuth } from '@/context/AuthContext';
+import { SuperAdminsTable } from '@/components/users/SuperAdminTable';
 
 const UserManagement = () => {
   const { toast } = useToast();
@@ -26,6 +28,8 @@ const UserManagement = () => {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [activeAdmin, setActiveAdmin] = useState<User | null>(null);
 
+  const { user } = useAuth();
+
   /// Assignment Dialog
   const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
   const [selectedUserForAssignment, setSelectedUserForAssignment] = useState<User | null>(null);
@@ -35,7 +39,7 @@ const UserManagement = () => {
   const [openAdminCreationDialog, setOpenAdminCreationDialog] = useState(false);
   const [password, setPassword] = useState<string>('');
 
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  // const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
   // Fetch users with error handling
   const {
@@ -94,33 +98,61 @@ const UserManagement = () => {
     },
   });
 
-  // const {
-  //   data: clients = [],
-  //   isLoading: clientsLoading,
-  //   error: clientsError,
-  // } = useQuery({
-  //   queryKey: ['clients'],
-  //   queryFn: async () => {
-  //     console.log('Fetching users...');
-  //     const response = await adminApi();
-  //     console.log('API Response:', response);
+  const {
+    data: clients = [],
+    isLoading: clientsLoading,
+    error: clientsError,
+  } = useQuery({
+    queryKey: ['clients'],
+    queryFn: async () => {
+      console.log('Fetching users...');
+      const response = await adminApi.getMyClients();
+      console.log('API Response:', response);
 
-  //     toast({
-  //       title: 'Client Admins Loaded',
-  //       description: 'Client Admins have been successfully loaded',
-  //       // variant: 'success',
-  //     });
-  //     return response.data;
-  //   },
-  //   onError: (error) => {
-  //     console.error('Error fetching users:', error);
-  //     toast({
-  //       title: 'Error',
-  //       description: error instanceof Error ? error.message : 'Failed to fetch users',
-  //       variant: 'destructive',
-  //     });
-  //   },
-  // });
+      toast({
+        title: 'Client Loaded',
+        description: 'Client have been successfully loaded',
+        // variant: 'success',
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      console.error('Error fetching users:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to fetch users',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const {
+    data: superAdmins = [],
+    isLoading: superAdminsLoading,
+    error: superAdminsError,
+  } = useQuery({
+    queryKey: ['super-admins'],
+    queryFn: async () => {
+      console.log('Fetching users...');
+      const response = await adminApi.getAllSuperAdmins();
+      console.log('API Response:', response);
+
+      toast({
+        title: 'Super Admins Loaded',
+        description: 'Super Admins have been successfully loaded',
+        // variant: 'success',
+      });
+      return response.data;
+    },
+    onError: (error) => {
+      console.error('Error fetching users:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to fetch users',
+        variant: 'destructive',
+      });
+    },
+  });
 
   const assignExpert = async (userId: string, adminId: string) => {
     await adminApi
@@ -214,18 +246,19 @@ const UserManagement = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   // useEffect(() => {
-  //   const filteredUsers = users
-  //     ? users.filter((user: User) => {
-  //         const matchesSearch =
-  //           user?.name.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-  //           user?.email.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-  //           user?.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //           {};
-  //         const matchesVisa = visaFilter === 'all' || user?.visaType === visaFilter;
-  //         const matchesStatus = statusFilter === 'all' || user?.status === statusFilter;
-  //         return matchesSearch && matchesVisa && matchesStatus;
-  //       })
-  //     : [];
+  const filteredUsers = users
+    ? users.filter((user: User) => {
+        console.log(searchTerm);
+        const matchesSearch =
+          user?.first_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+          user?.last_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+          user?.email?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+          user?.id.toLowerCase().includes(searchTerm?.toLowerCase());
+        const matchesVisa = visaFilter === 'all' || user?.visaType === visaFilter;
+        const matchesStatus = statusFilter === 'all' || user?.status === statusFilter;
+        return matchesSearch && matchesVisa && matchesStatus;
+      })
+    : [];
 
   //   setFilteredUsers(filteredUsers);
   // }, [users]);
@@ -313,38 +346,63 @@ const UserManagement = () => {
         </Card>
 
         {/* Users Table */}
+        {user.role === 'super_admin' && (
+          <Card className='bg-white/5 border-white/10'>
+            <CardHeader className='p-4 md:p-6'>
+              <CardTitle>Users</CardTitle>
+            </CardHeader>
+            <CardContent className='p-0'>
+              <UsersTable
+                users={filteredUsers}
+                onAssignExpert={handleAssignExpert}
+                onSuspendUser={handleSuspendUser}
+                onActivateUser={handleActivateUser}
+                onManageRoles={handleManageRoles}
+                setSelectedUserForAssignment={setSelectedUserForAssignment}
+                setOpenAssignmentDialog={setOpenAssignmentDialog}
+                setOpenAdminCreationDialog={setOpenAdminCreationDialog}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Client Admins Table */}
         <Card className='bg-white/5 border-white/10'>
           <CardHeader className='p-4 md:p-6'>
-            <CardTitle>Users</CardTitle>
+            <CardTitle>Clients</CardTitle>
           </CardHeader>
           <CardContent className='p-0'>
-            <UsersTable
-              users={users}
-              onAssignExpert={handleAssignExpert}
-              onSuspendUser={handleSuspendUser}
-              onActivateUser={handleActivateUser}
-              onManageRoles={handleManageRoles}
-              setSelectedUserForAssignment={setSelectedUserForAssignment}
-              setOpenAssignmentDialog={setOpenAssignmentDialog}
-              setOpenAdminCreationDialog={setOpenAdminCreationDialog}
-            />
+            <ClientsTable users={clients} />
           </CardContent>
         </Card>
 
-        <Card className='bg-white/5 border-white/10'>
-          <CardHeader className='p-4 md:p-6'>
-            <CardTitle>Client Admins And their Clients</CardTitle>
-          </CardHeader>
-          <CardContent className='p-0'>
-            <ClientAdminsTable
-              users={clientAdmins}
-              setActiveAdmin={setActiveAdmin}
-              // onSuspendUser={handleSuspendUser}
-              // onManageRoles={handleManageRoles}
-              setAdminClients={handleAdminClients}
-            />
-          </CardContent>
-        </Card>
+        {user.role === 'super_admin' && (
+          <Card className='bg-white/5 border-white/10'>
+            <CardHeader className='p-4 md:p-6'>
+              <CardTitle>Client Admins And their Clients</CardTitle>
+            </CardHeader>
+            <CardContent className='p-0'>
+              <ClientAdminsTable
+                users={clientAdmins}
+                setActiveAdmin={setActiveAdmin}
+                // onSuspendUser={handleSuspendUser}
+                // onManageRoles={handleManageRoles}
+                setAdminClients={handleAdminClients}
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {user.role === 'super_admin' && (
+          <Card className='bg-white/5 border-white/10'>
+            <CardHeader className='p-4 md:p-6'>
+              <CardTitle>Super Admins</CardTitle>
+            </CardHeader>
+            <CardContent className='p-0'>
+              <SuperAdminsTable users={superAdmins} />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Role Management Dialog */}
         <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>

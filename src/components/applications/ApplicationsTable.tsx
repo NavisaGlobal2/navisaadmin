@@ -36,7 +36,7 @@ export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignE
               <TableHead>Type</TableHead>
               <TableHead>Stage</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Expert</TableHead>
+              {/* <TableHead>Expert</TableHead> */}
               <TableHead>Last Updated</TableHead>
             </TableRow>
           </TableHeader>
@@ -63,7 +63,7 @@ export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignE
                 <TableCell>{app.visa_type}</TableCell>
                 <TableCell>{app.stage}</TableCell>
                 <TableCell>{getStatusBadge(app.status)}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   {app.assignedExpert || (
                     <Button
                       variant='ghost'
@@ -76,7 +76,7 @@ export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignE
                       Assign Expert
                     </Button>
                   )}
-                </TableCell>
+                </TableCell> */}
                 <TableCell>{new Date(app.updated_at).toLocaleDateString()}</TableCell>
               </TableRow>
             ))}

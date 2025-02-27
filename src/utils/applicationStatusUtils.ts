@@ -20,17 +20,19 @@ export const filterApplications = (
   applications: Application[],
   searchQuery: string,
   statusFilter: string,
-  expertFilter: string
+  expertFilter: string,
+  stageFilter: string
 ) => {
   return applications.filter((app) => {
     const matchesSearch =
-      app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.id.toLowerCase().includes(searchQuery.toLowerCase());
+      app?.user?.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app?.user?.email?.toLowerCase().includes(searchQuery.toLowerCase());
+    // app?.user?.id.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
     const matchesExpert = expertFilter === 'all' || app.assignedExpert === expertFilter;
+    const matchesStage = stageFilter === 'all' || app.stage === stageFilter;
 
-    return matchesSearch && matchesStatus && matchesExpert;
+    return matchesSearch && matchesStatus && matchesExpert && matchesStage;
   });
 };

@@ -1,8 +1,7 @@
-
-import { createContext, useContext, useState, useEffect } from "react";
-import { User, AuthContextType } from "@/types/auth";
-import { useToast } from "@/hooks/use-toast";
-import { adminApi } from "@/services/api";
+import { createContext, useContext, useState, useEffect } from 'react';
+import { User, AuthContextType } from '@/types/auth';
+import { useToast } from '@/hooks/use-toast';
+import { adminApi } from '@/services/api';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -13,13 +12,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Check for token and user data in localStorage
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("userData");
-    
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+
     if (token && userData) {
       setUser(JSON.parse(userData));
     }
-    
+
     setIsLoading(false);
   }, []);
 
@@ -27,31 +26,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     try {
       const response = await adminApi.login(email, password);
-      
+
       if (response.data) {
         const { token, user: userData } = response.data;
-        
+
         // Save token and user data
-        localStorage.setItem("token", token);
-        localStorage.setItem("userData", JSON.stringify(userData));
-        
+        localStorage.setItem('token', token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+
         setUser({
           id: userData.sub,
           email: userData.email,
-          name: userData.email.split("@")[0], // You might want to adjust this
-          role: "admin" // You might want to adjust this based on your needs
+          name: userData.email.split('@')[0], // You might want to adjust this
+          role: userData.role, // You might want to adjust this based on your needs
         });
 
         toast({
-          title: "Login successful",
-          description: "Welcome back!",
+          title: 'Login successful',
+          description: 'Welcome back!',
         });
       }
     } catch (error) {
       toast({
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
+        title: 'Login failed',
+        description: error instanceof Error ? error.message : 'An error occurred',
+        variant: 'destructive',
       });
       throw error;
     } finally {
@@ -65,21 +64,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const response = await adminApi.createClientAdmin({
         email,
         password,
-        first_name: name.split(" ")[0],
-        last_name: name.split(" ")[1] || "",
+        first_name: name.split(' ')[0],
+        last_name: name.split(' ')[1] || '',
       });
 
       toast({
-        title: "Registration successful",
-        description: "Admin account created successfully.",
+        title: 'Registration successful',
+        description: 'Admin account created successfully.',
       });
 
       return response;
     } catch (error) {
       toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
+        title: 'Registration failed',
+        description: error instanceof Error ? error.message : 'An error occurred',
+        variant: 'destructive',
       });
       throw error;
     } finally {
@@ -89,34 +88,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userData");
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
       setUser(null);
-      
+
       toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
+        title: 'Logged out',
+        description: 'You have been successfully logged out.',
       });
     } catch (error) {
       toast({
-        title: "Logout failed",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
+        title: 'Logout failed',
+        description: error instanceof Error ? error.message : 'An error occurred',
+        variant: 'destructive',
       });
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

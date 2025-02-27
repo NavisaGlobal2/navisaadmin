@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
-import { Copy, Power, Shield, UserCheck, UserX } from 'lucide-react';
+import { Copy, Delete, Power, Shield, UserCheck, UserX } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { adminApi } from '@/services/api';
 
@@ -9,7 +9,7 @@ interface UsersTableProps {
   users: User[];
 }
 
-export const ClientsTable = ({ users }: UsersTableProps) => {
+export const SuperAdminsTable = ({ users }: UsersTableProps) => {
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
@@ -18,18 +18,33 @@ export const ClientsTable = ({ users }: UsersTableProps) => {
     });
   };
 
+  const removeSuperAdmin = async (email: string) => {
+    await adminApi
+      .removeSuperAdmin(email)
+      .then(() => {
+        toast({
+          title: 'Super Admin Removed',
+          description: email + ' has been removed as a super admin',
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: 'Error',
+          description: error.response.data.message,
+        });
+      });
+  };
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
-          <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Visa Type</TableHead>
+
           {/* <TableHead>Country</TableHead>
           <TableHead>Status</TableHead> */}
           {/* <TableHead>Expert</TableHead> */}
-          <TableHead>Last Updated</TableHead>
+          <TableHead>Created At</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -42,34 +57,28 @@ export const ClientsTable = ({ users }: UsersTableProps) => {
                 <Copy className='h-4 w-4' />
               </Button>
             </TableCell>
-            <TableCell>
+            {/* <TableCell>
               {user.first_name} {user.last_name}
-            </TableCell>
+            </TableCell> */}
             <TableCell>
               <span>{user.email}</span>
             </TableCell>
-            <TableCell>{user.visa_type}</TableCell>
             {/* <TableCell>{user.country}</TableCell>
             <TableCell>{user.status}</TableCell> */}
             {/* <TableCell>{user?.client_admin?.name ? user.client_admin.name : 'not assigned'}</TableCell> */}
-            <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
+            <TableCell>{new Date(user.created_at).toDateString()}</TableCell>
             <TableCell>
-              {/* <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-2'>
                 <Button
                   variant='outline'
                   size='sm'
                   onClick={() => {
-                    setSelectedUserForAssignment(user);
-                    setOpenAdminCreationDialog(true);
+                    removeSuperAdmin(user.email);
                   }}
                 >
-                  <Shield className='h-4 w-4' />
+                  <Delete className='h-4 w-4' />
                 </Button>
-
-               
-
-               
-              </div> */}
+              </div>
             </TableCell>
           </TableRow>
         ))}

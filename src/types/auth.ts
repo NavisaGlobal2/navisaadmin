@@ -1,9 +1,8 @@
-
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "admin" | "user";
+  role: 'super_admin' | 'client_admin';
 }
 
 export interface AuthContextType {

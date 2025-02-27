@@ -5,7 +5,7 @@ import { mockApplications } from '@/data/mockApplications';
 import { adminApi } from '@/services/api';
 
 export const useApplications = () => {
-  const [applications, setApplications] = useState<Application[]>(mockApplications);
+  const [applications, setApplications] = useState<Application[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
