@@ -90,33 +90,24 @@ const VisaCreation = () => {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="visaType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Visa Type</FormLabel>
-                      <Select
-                        onValueChange={(value: VisaType) => handleVisaTypeChange(value)}
-                        value={selectedVisaType || undefined}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select visa type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {VISA_TYPES.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <FormLabel>Visa Type</FormLabel>
+                  <Select
+                    onValueChange={handleVisaTypeChange}
+                    value={selectedVisaType || undefined}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select visa type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {VISA_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 {selectedVisaType && renderFormFields(selectedVisaType, form)}
 
@@ -136,7 +127,6 @@ const VisaCreation = () => {
   );
 };
 
-// Helper functions for form rendering and data handling
 function getDefaultValues(visaType: VisaType | null) {
   switch (visaType) {
     case "UK Global Talent Visa":
@@ -167,14 +157,93 @@ function getDefaultValues(visaType: VisaType | null) {
           },
         },
       };
-    // Add other visa types default values similarly
+    case "US EB-1/EB-2 VISA":
+      return {
+        education: {
+          scoring: {
+            PhD: 100,
+            Masters: 80,
+            BachelorsExceptional: 60,
+          },
+        },
+        experience: {
+          minimumYearsRequired: 5,
+          experiencePoints: {
+            "5-7Years": 60,
+            "8-10Years": 80,
+            "10+Years": 100,
+          },
+        },
+        positions: {
+          Executive: 100,
+          SeniorManagement: 80,
+          Expert: 70,
+          Other: 50,
+        },
+        achievements: {
+          required: 3,
+          recognitionLevels: {
+            International: 100,
+            National: 80,
+            Industry: 60,
+          },
+        },
+      };
+    case "CANADA EXPRESS ENTRY":
+      return {
+        education: {
+          PhD: 100,
+          Masters: 80,
+          Bachelors: 60,
+          ThreeYearDiploma: 50,
+          OneTwoYearDiploma: 40,
+        },
+        languageProficiency: {
+          CLB9Plus: 100,
+          CLB8: 80,
+          CLB7: 60,
+          CLB6: 40,
+          BelowCLB6: "Ineligible",
+        },
+        workExperience: {
+          scoring: {
+            "1Year": 40,
+            "2-3Years": 53,
+            "4-5Years": 64,
+            "6+Years": 72,
+          },
+          foreignBonus: {
+            "1-2Years": 13,
+            "3-4Years": 25,
+            "5+Years": 50,
+          },
+        },
+      };
+    case "DUBAI GOLDEN VISA":
+      return {
+        financialCriteria: {
+          PublicInvestment10MPlus: 100,
+          PublicInvestment5To10M: 80,
+          PrivateCompany5MPlus: 80,
+          PrivateCompany3To5M: 60,
+          PropertyInvestment2MPlus: 60,
+          PropertyInvestment1To2M: 40,
+        },
+        professionalCriteria: {
+          Salary30KPlus: 100,
+          Salary20To30K: 80,
+          Salary15To20K: 60,
+          PositionCEOMD: 100,
+          PositionSeniorManagement: 80,
+          PositionDepartmentHead: 60,
+        },
+      };
     default:
       return {};
   }
 }
 
 function formatFormData(visaType: VisaType, data: any) {
-  // Format the form data according to the API schema
   return data;
 }
 
@@ -219,10 +288,7 @@ function renderFormFields(visaType: VisaType, form: any) {
           <div className="space-y-4">
             <h3 className="font-medium">Experience Requirements</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {renderScoreInput(
-                "Minimum Years Required",
-                "experience.minimumYearsRequired"
-              )}
+              {renderScoreInput("Minimum Years Required", "experience.minimumYearsRequired")}
               {renderScoreInput("3-5 Years Score", "experience.experiencePoints.3-5Years")}
               {renderScoreInput("5-8 Years Score", "experience.experiencePoints.5-8Years")}
               {renderScoreInput("8+ Years Score", "experience.experiencePoints.8+Years")}
@@ -240,7 +306,124 @@ function renderFormFields(visaType: VisaType, form: any) {
           </div>
         </div>
       );
-    // Add other visa types form fields
+
+    case "US EB-1/EB-2 VISA":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="font-medium">Education Scoring</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("PhD Score", "education.scoring.PhD")}
+              {renderScoreInput("Masters Score", "education.scoring.Masters")}
+              {renderScoreInput("Bachelors (Exceptional) Score", "education.scoring.BachelorsExceptional")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Experience Requirements</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("Minimum Years Required", "experience.minimumYearsRequired")}
+              {renderScoreInput("5-7 Years Score", "experience.experiencePoints.5-7Years")}
+              {renderScoreInput("8-10 Years Score", "experience.experiencePoints.8-10Years")}
+              {renderScoreInput("10+ Years Score", "experience.experiencePoints.10+Years")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Positions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("Executive Position", "positions.Executive")}
+              {renderScoreInput("Senior Management", "positions.SeniorManagement")}
+              {renderScoreInput("Expert Position", "positions.Expert")}
+              {renderScoreInput("Other Positions", "positions.Other")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Achievements</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("Required Items", "achievements.required")}
+              {renderScoreInput("International Recognition", "achievements.recognitionLevels.International")}
+              {renderScoreInput("National Recognition", "achievements.recognitionLevels.National")}
+              {renderScoreInput("Industry Recognition", "achievements.recognitionLevels.Industry")}
+            </div>
+          </div>
+        </div>
+      );
+
+    case "CANADA EXPRESS ENTRY":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="font-medium">Education</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("PhD", "education.PhD")}
+              {renderScoreInput("Masters", "education.Masters")}
+              {renderScoreInput("Bachelors", "education.Bachelors")}
+              {renderScoreInput("Three Year Diploma", "education.ThreeYearDiploma")}
+              {renderScoreInput("One/Two Year Diploma", "education.OneTwoYearDiploma")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Language Proficiency</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("CLB 9+", "languageProficiency.CLB9Plus")}
+              {renderScoreInput("CLB 8", "languageProficiency.CLB8")}
+              {renderScoreInput("CLB 7", "languageProficiency.CLB7")}
+              {renderScoreInput("CLB 6", "languageProficiency.CLB6")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Work Experience</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("1 Year", "workExperience.scoring.1Year")}
+              {renderScoreInput("2-3 Years", "workExperience.scoring.2-3Years")}
+              {renderScoreInput("4-5 Years", "workExperience.scoring.4-5Years")}
+              {renderScoreInput("6+ Years", "workExperience.scoring.6+Years")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Foreign Experience Bonus</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("1-2 Years", "workExperience.foreignBonus.1-2Years")}
+              {renderScoreInput("3-4 Years", "workExperience.foreignBonus.3-4Years")}
+              {renderScoreInput("5+ Years", "workExperience.foreignBonus.5+Years")}
+            </div>
+          </div>
+        </div>
+      );
+
+    case "DUBAI GOLDEN VISA":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="font-medium">Financial Criteria</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("Public Investment 10M+", "financialCriteria.PublicInvestment10MPlus")}
+              {renderScoreInput("Public Investment 5-10M", "financialCriteria.PublicInvestment5To10M")}
+              {renderScoreInput("Private Company 5M+", "financialCriteria.PrivateCompany5MPlus")}
+              {renderScoreInput("Private Company 3-5M", "financialCriteria.PrivateCompany3To5M")}
+              {renderScoreInput("Property Investment 2M+", "financialCriteria.PropertyInvestment2MPlus")}
+              {renderScoreInput("Property Investment 1-2M", "financialCriteria.PropertyInvestment1To2M")}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-medium">Professional Criteria</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {renderScoreInput("Salary 30K+", "professionalCriteria.Salary30KPlus")}
+              {renderScoreInput("Salary 20-30K", "professionalCriteria.Salary20To30K")}
+              {renderScoreInput("Salary 15-20K", "professionalCriteria.Salary15To20K")}
+              {renderScoreInput("CEO/MD Position", "professionalCriteria.PositionCEOMD")}
+              {renderScoreInput("Senior Management", "professionalCriteria.PositionSeniorManagement")}
+              {renderScoreInput("Department Head", "professionalCriteria.PositionDepartmentHead")}
+            </div>
+          </div>
+        </div>
+      );
     default:
       return null;
   }
