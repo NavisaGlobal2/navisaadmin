@@ -81,6 +81,7 @@ export const adminApi = {
     return response.data;
   },
 
+  //Remove uper Admin
   removeSuperAdmin: async (email: string) => {
     const response = await api.post('/admin/remove-super-admin', { email });
     return response.data;
