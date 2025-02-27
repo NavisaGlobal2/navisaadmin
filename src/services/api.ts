@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 const BASE_URL = "https://navisa-api.onrender.com/api/v1";
@@ -59,6 +58,11 @@ export const adminApi = {
 
   deleteClientAdmin: async (id: string) => {
     const response = await api.delete(`/admin/client-admins/${id}`);
+    return response.data;
+  },
+
+  createVisa: async (visaName: string, visaData: any) => {
+    const response = await api.post(`/admin/visas/create?visa_name=${visaName}`, visaData);
     return response.data;
   },
 };
