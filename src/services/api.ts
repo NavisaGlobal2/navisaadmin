@@ -71,8 +71,23 @@ export const adminApi = {
     return response.data;
   },
 
+  getAllVisas: async () => {
+    const response = await api.get('/admin/visas/all');
+    return response.data;
+  },
+
   createSuperAdmin: async (email: string) => {
     const response = await api.post('/admin/create-super-admin', { email });
+    return response.data;
+  },
+
+  removeSuperAdmin: async (email: string) => {
+    const response = await api.post('/admin/remove-super-admin', { email });
+    return response.data;
+  },
+
+  getAllSuperAdmins: async () => {
+    const response = await api.get('/admin/super-admins/all');
     return response.data;
   },
 
@@ -83,6 +98,11 @@ export const adminApi = {
 
   approveDocument: async (id: string) => {
     const response = await api.put(`/admin/application/approve-document/${id}`);
+    return response.data;
+  },
+
+  getMyClients: async () => {
+    const response = await api.get('/client-admin/clients/all');
     return response.data;
   },
 };
