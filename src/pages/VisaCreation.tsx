@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -21,12 +21,24 @@ import { UKGlobalTalentForm } from "@/components/visa-forms/UKGlobalTalentForm";
 import { USEBVisaForm } from "@/components/visa-forms/USEBVisaForm";
 import { CanadaExpressEntryForm } from "@/components/visa-forms/CanadaExpressEntryForm";
 import { DubaiGoldenVisaForm } from "@/components/visa-forms/DubaiGoldenVisaForm";
+import { VisaCriteriaList } from "@/components/eligibility/settings/VisaCriteriaList";
 
 const VisaCreation = () => {
   const { toast } = useToast();
   const [selectedVisaType, setSelectedVisaType] = useState<VisaType | null>(null);
+
+  const { data: visas = [] } = useQuery({
+    queryKey: ["visas"],
+    queryFn: adminApi.getAllVisas,
+  });
+
+  const getExistingVisaCriteria = (visaType: VisaType) => {
+    const existingVisa = visas.find((v: any) => v.visa_name === visaType);
+    return existingVisa?.criteras || getDefaultValues(visaType);
+  };
+
   const form = useForm<VisaFormData>({
-    defaultValues: getDefaultValues(selectedVisaType),
+    defaultValues: selectedVisaType ? getExistingVisaCriteria(selectedVisaType) : {},
   });
 
   const createVisaMutation = useMutation({
@@ -59,7 +71,7 @@ const VisaCreation = () => {
 
   const handleVisaTypeChange = (value: VisaType) => {
     setSelectedVisaType(value);
-    form.reset(getDefaultValues(value));
+    form.reset(getExistingVisaCriteria(value));
   };
 
   const renderVisaForm = () => {
@@ -81,15 +93,17 @@ const VisaCreation = () => {
     <DashboardLayout>
       <div className="space-y-6 p-6">
         <div>
-          <h1 className="text-2xl font-semibold">Create Visa Criteria</h1>
+          <h1 className="text-2xl font-semibold">Visa Criteria Management</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Set up scoring criteria for different visa types
+            View and manage scoring criteria for different visa types
           </p>
         </div>
 
+        <VisaCriteriaList />
+
         <Card>
           <CardHeader>
-            <CardTitle>Visa Configuration</CardTitle>
+            <CardTitle>Create or Update Visa Criteria</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>

@@ -1,3 +1,4 @@
+
 import axios from "axios";
 
 const BASE_URL = "https://navisa-api.onrender.com/api/v1";
@@ -63,6 +64,11 @@ export const adminApi = {
 
   createVisa: async (visaName: string, visaData: any) => {
     const response = await api.post(`/admin/visas/create?visa_name=${visaName}`, visaData);
+    return response.data;
+  },
+
+  getAllVisas: async () => {
+    const response = await api.get('/admin/visas/all');
     return response.data;
   },
 };
