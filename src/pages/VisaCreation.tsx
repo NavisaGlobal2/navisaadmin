@@ -144,7 +144,7 @@ const VisaCreation = () => {
       ) : (
         <div className='space-y-6 p-6'>
           <h1>Not Authorized</h1>
-          <p>You need to be a Super Admin to do this</p>
+          <p>You need to be a Super Admin to view this page</p>
         </div>
       )}
     </DashboardLayout>

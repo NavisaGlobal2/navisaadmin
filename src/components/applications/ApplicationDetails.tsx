@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { adminApi } from '@/services/api';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface ApplicationDetailsProps {
   application: Application;
@@ -28,6 +29,8 @@ interface ApplicationDetailsProps {
 export const ApplicationDetails = ({ application, onAddNote, onClose }: ApplicationDetailsProps) => {
   const [noteContent, setNoteContent] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
+
+  const navigate = useNavigate();
 
   const handleAddNote = () => {
     if (noteContent.trim()) {
@@ -47,6 +50,7 @@ export const ApplicationDetails = ({ application, onAddNote, onClose }: Applicat
       pending: { color: 'bg-yellow-500/10 text-yellow-500', icon: AlertCircle },
 
       Rejected: { color: 'bg-red-500/10 text-red-500', icon: XCircle },
+      Disapproved: { color: 'bg-red-500/10 text-red-500', icon: XCircle },
     };
 
     const config = statusConfig[status];
@@ -58,23 +62,60 @@ export const ApplicationDetails = ({ application, onAddNote, onClose }: Applicat
     );
   };
 
-  const handleApproveDocument = async (documentId: string) => {
-    await adminApi
-      .approveDocument(documentId)
-      .then(() => {
-        console.log('Document approved');
-        toast({
-          title: 'Document Approved',
-          description: 'Document has been approved',
+  const handleApproveDocument = async (documentId: string, status) => {
+    if (status !== 'Verified') {
+      await adminApi
+        .approveDocument(documentId)
+        .then((resp) => {
+          console.log('Document approved');
+
+          if (resp.status === 'success') {
+            toast({
+              title: 'Document Approved',
+              description: 'Document has been approved',
+            });
+            navigate(0);
+          } else {
+            toast({
+              title: 'Error',
+              description: 'Failed to execute operation',
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast({
+            title: 'Error',
+            description: error.response.data.message,
+          });
         });
-      })
-      .catch((error) => {
-        console.log(error);
-        toast({
-          title: 'Error',
-          description: error.response.data.message,
+    } else {
+      await adminApi
+        .rejectDocument(documentId)
+        .then((resp) => {
+          console.log('Document rejected');
+
+          if (resp.status === 'success') {
+            toast({
+              title: 'Document Rejected',
+              description: 'Document has been rejected',
+            });
+            navigate(0);
+          } else {
+            toast({
+              title: 'Error',
+              description: 'Failed to execute operation',
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast({
+            title: 'Error',
+            description: error.response.data.message,
+          });
         });
-      });
+    }
   };
   return (
     <div className='fixed inset-0 bg-background/80 backdrop-blur-sm z-50'>
@@ -137,8 +178,8 @@ export const ApplicationDetails = ({ application, onAddNote, onClose }: Applicat
                       <Button variant='outline' onClick={() => window.open(doc.signedUrl, '_blank')}>
                         View
                       </Button>
-                      <Button variant='outline' onClick={() => handleApproveDocument(doc.id)}>
-                        Approve
+                      <Button variant='outline' onClick={() => handleApproveDocument(doc.id, doc.status)}>
+                        {doc.status === 'Verified' ? 'Reject' : 'Approve'}
                       </Button>
                       {getDocumentStatusBadge(doc.status)}
                     </div>

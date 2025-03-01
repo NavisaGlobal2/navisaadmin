@@ -102,6 +102,10 @@ export const adminApi = {
     return response.data;
   },
 
+  rejectDocument: async (id: string) => {
+    const response = await api.put(`/admin/application/reject-document/${id}`);
+    return response.data;
+  },
   getMyClients: async () => {
     const response = await api.get('/client-admin/clients/all');
     return response.data;
