@@ -1,12 +1,13 @@
+
 import { useEffect, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { UserPlus, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { UserFilters } from '@/components/users/UserFilters';
 import { UsersTable } from '@/components/users/UsersTable';
-import { User } from '@/types/user';
+import { User, UserDetails } from '@/types/user';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -17,10 +18,10 @@ import { Input } from '@/components/ui/input';
 import { ClientsTable } from '@/components/users/ClientsTable';
 import { useAuth } from '@/context/AuthContext';
 import { SuperAdminsTable } from '@/components/users/SuperAdminTable';
+import UserDetailsDialog from '@/components/users/UserDetailsDialog';
 
 const UserManagement = () => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [visaFilter, setVisaFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -39,7 +40,9 @@ const UserManagement = () => {
   const [openAdminCreationDialog, setOpenAdminCreationDialog] = useState(false);
   const [password, setPassword] = useState<string>('');
 
-  // const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  // User Details Dialog
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isUserDetailsDialogOpen, setIsUserDetailsDialogOpen] = useState(false);
 
   // Fetch users with error handling
   const {
@@ -56,18 +59,25 @@ const UserManagement = () => {
       toast({
         title: 'Users Loaded',
         description: 'Users have been successfully loaded',
-        // variant: 'success',
       });
       return response.data;
     },
-    onError: (error) => {
-      console.error('Error fetching users:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to fetch users',
-        variant: 'destructive',
-      });
+  });
+
+  // Fetch user details when a user is selected
+  const {
+    data: userDetails,
+    isLoading: isLoadingUserDetails,
+    error: userDetailsError,
+    refetch: refetchUserDetails,
+  } = useQuery({
+    queryKey: ['userDetails', selectedUserId],
+    queryFn: async () => {
+      if (!selectedUserId) return null;
+      const response = await adminApi.getUserDetails(selectedUserId);
+      return response as UserDetails;
     },
+    enabled: !!selectedUserId,
   });
 
   const {
@@ -77,24 +87,15 @@ const UserManagement = () => {
   } = useQuery({
     queryKey: ['clientAdmins'],
     queryFn: async () => {
-      console.log('Fetching users...');
+      console.log('Fetching client admins...');
       const response = await adminApi.getAllClientAdminsWithClients();
       console.log('API Response:', response);
 
       toast({
         title: 'Client Admins Loaded',
         description: 'Client Admins have been successfully loaded',
-        // variant: 'success',
       });
       return response.data;
-    },
-    onError: (error) => {
-      console.error('Error fetching users:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to fetch users',
-        variant: 'destructive',
-      });
     },
   });
 
@@ -105,24 +106,15 @@ const UserManagement = () => {
   } = useQuery({
     queryKey: ['clients'],
     queryFn: async () => {
-      console.log('Fetching users...');
+      console.log('Fetching clients...');
       const response = await adminApi.getMyClients();
       console.log('API Response:', response);
 
       toast({
         title: 'Client Loaded',
         description: 'Client have been successfully loaded',
-        // variant: 'success',
       });
       return response.data;
-    },
-    onError: (error) => {
-      console.error('Error fetching users:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to fetch users',
-        variant: 'destructive',
-      });
     },
   });
 
@@ -133,33 +125,28 @@ const UserManagement = () => {
   } = useQuery({
     queryKey: ['super-admins'],
     queryFn: async () => {
-      console.log('Fetching users...');
+      console.log('Fetching super admins...');
       const response = await adminApi.getAllSuperAdmins();
       console.log('API Response:', response);
 
       toast({
         title: 'Super Admins Loaded',
         description: 'Super Admins have been successfully loaded',
-        // variant: 'success',
       });
       return response.data;
     },
-    onError: (error) => {
-      console.error('Error fetching users:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to fetch users',
-        variant: 'destructive',
-      });
-    },
   });
+
+  const handleUserSelect = (userId: string) => {
+    setSelectedUserId(userId);
+    setIsUserDetailsDialogOpen(true);
+  };
 
   const assignExpert = async (userId: string, adminId: string) => {
     await adminApi
       .assignClient({ client_id: userId, admin_id: adminId })
       .then((res) => {
         console.log(res);
-        // setOpenAssignmentDialog(false);
         toast({
           title: 'Expert Assigned',
           description: `Expert has been assigned to user ${userId}`,
@@ -245,10 +232,8 @@ const UserManagement = () => {
   const [adminClients, setAdminClients] = useState<User[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
 
-  // useEffect(() => {
   const filteredUsers = users
     ? users.filter((user: User) => {
-        console.log(searchTerm);
         const matchesSearch =
           user?.first_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
           user?.last_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
@@ -259,9 +244,6 @@ const UserManagement = () => {
         return matchesSearch && matchesVisa && matchesStatus;
       })
     : [];
-
-  //   setFilteredUsers(filteredUsers);
-  // }, [users]);
 
   const stats = [
     {
@@ -361,6 +343,7 @@ const UserManagement = () => {
                 setSelectedUserForAssignment={setSelectedUserForAssignment}
                 setOpenAssignmentDialog={setOpenAssignmentDialog}
                 setOpenAdminCreationDialog={setOpenAdminCreationDialog}
+                onUserSelect={handleUserSelect}
               />
             </CardContent>
           </Card>
@@ -385,8 +368,6 @@ const UserManagement = () => {
               <ClientAdminsTable
                 users={clientAdmins}
                 setActiveAdmin={setActiveAdmin}
-                // onSuspendUser={handleSuspendUser}
-                // onManageRoles={handleManageRoles}
                 setAdminClients={handleAdminClients}
               />
             </CardContent>
@@ -429,7 +410,7 @@ const UserManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Role Management Dialog */}
+        {/* Admin Clients Dialog */}
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogContent>
             <DialogHeader>
@@ -503,6 +484,14 @@ const UserManagement = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* User Details Dialog */}
+        <UserDetailsDialog
+          isOpen={isUserDetailsDialogOpen}
+          onClose={() => setIsUserDetailsDialogOpen(false)}
+          userDetails={userDetails}
+          isLoading={isLoadingUserDetails}
+        />
       </div>
     </DashboardLayout>
   );

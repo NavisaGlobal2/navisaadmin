@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 const BASE_URL = 'https://navisa-api.onrender.com/api/v1';
 // const BASE_URL = 'http://localhost:5050/api/v1';
@@ -108,6 +109,11 @@ export const adminApi = {
   },
   getMyClients: async () => {
     const response = await api.get('/client-admin/clients/all');
+    return response.data;
+  },
+
+  getUserDetails: async (id: string) => {
+    const response = await api.get(`/admin/user/${id}`);
     return response.data;
   },
 };

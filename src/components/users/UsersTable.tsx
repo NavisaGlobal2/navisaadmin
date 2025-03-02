@@ -1,3 +1,4 @@
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
@@ -14,6 +15,7 @@ interface UsersTableProps {
   setSelectedUserForAssignment: (user: User | null) => void;
   setOpenAssignmentDialog: (open: boolean) => void;
   setOpenAdminCreationDialog: (open: boolean) => void;
+  onUserSelect: (userId: string) => void;
 }
 
 export const UsersTable = ({
@@ -25,6 +27,7 @@ export const UsersTable = ({
   setSelectedUserForAssignment,
   setOpenAssignmentDialog,
   setOpenAdminCreationDialog,
+  onUserSelect,
 }: UsersTableProps) => {
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
@@ -67,10 +70,22 @@ export const UsersTable = ({
       </TableHeader>
       <TableBody>
         {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className=' flex items-center gap-2 mt-2'>
+          <TableRow 
+            key={user.id} 
+            className="cursor-pointer hover:bg-muted"
+            onClick={() => onUserSelect(user.id)}
+          >
+            <TableCell className='flex items-center gap-2 mt-2'>
               <span>{user.id}</span>
-              <Button variant='outline' size='icon' className=' w-3 h-3' onClick={() => handleCopyId(user.id)}>
+              <Button 
+                variant='outline' 
+                size='icon' 
+                className='w-3 h-3' 
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent row click event
+                  handleCopyId(user.id);
+                }}
+              >
                 <Copy className='h-4 w-4' />
               </Button>
             </TableCell>
@@ -90,7 +105,8 @@ export const UsersTable = ({
                 <Button
                   variant='outline'
                   size='sm'
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent row click event
                     setSelectedUserForAssignment(user);
                     setOpenAdminCreationDialog(true);
                   }}
@@ -101,7 +117,8 @@ export const UsersTable = ({
                 <Button
                   variant='outline'
                   size='sm'
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent row click event
                     setSelectedUserForAssignment(user);
                     setOpenAssignmentDialog(true);
                   }}
@@ -112,7 +129,8 @@ export const UsersTable = ({
                 <Button
                   variant='outline'
                   size='sm'
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent row click event
                     createSuperAdmin(user.email);
                   }}
                 >
