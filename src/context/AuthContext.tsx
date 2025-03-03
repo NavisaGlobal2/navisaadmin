@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '@/types/auth';
 import { useToast } from '@/hooks/use-toast';
@@ -53,12 +52,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           variant: 'destructive',
         });
       }
-    } catch (error) {
-      toast({
-        title: 'Login failed',
-        description: error instanceof Error ? error.message : 'An error occurred',
-        variant: 'destructive',
-      });
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Handle specific error cases
+      if (error.response?.data?.error === 'Invalid login credentials') {
+        toast({
+          title: 'Login failed',
+          description: 'Invalid email or password. Please try again.',
+          variant: 'destructive',
+        });
+      } else if (error.response?.data?.error === 'Unauthorized') {
+        toast({
+          title: 'Access Denied',
+          description: 'Your account does not have permission to access this application.',
+          variant: 'destructive',
+        });
+      } else if (error.response?.status === 429) {
+        toast({
+          title: 'Too many attempts',
+          description: 'Too many login attempts. Please try again later.',
+          variant: 'destructive',
+        });
+      } else if (error.message === 'Network Error') {
+        toast({
+          title: 'Connection Error',
+          description: 'Unable to connect to the server. Please check your internet connection.',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Login failed',
+          description: 'An unexpected error occurred. Please try again later.',
+          variant: 'destructive',
+        });
+      }
+      
       throw error;
     } finally {
       setIsLoading(false);

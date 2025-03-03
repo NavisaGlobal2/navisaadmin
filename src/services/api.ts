@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 
@@ -21,11 +22,16 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Check if error is due to expired JWT
+    // Check if error is due to expired JWT or related auth issues
     const isJwtError = 
       error.response?.data?.message?.includes('token has invalid claims: token is expired') ||
       error.response?.data?.message?.includes('invalid JWT');
     
+    // Check for unauthorized errors
+    const isUnauthorized = 
+      error.response?.data?.error === 'Unauthorized' ||
+      error.response?.status === 401;
+
     if (isJwtError) {
       // Clear token and userData from localStorage
       localStorage.removeItem('token');
@@ -42,6 +48,13 @@ api.interceptors.response.use(
       setTimeout(() => {
         window.location.href = '/login';
       }, 1500);
+    } else if (isUnauthorized) {
+      // Show toast notification for unauthorized access
+      toast({
+        title: 'Access Denied',
+        description: 'You do not have permission to perform this action. Please contact your administrator.',
+        variant: 'destructive',
+      });
     }
     
     return Promise.reject(error);
