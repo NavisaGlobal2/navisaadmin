@@ -12,8 +12,6 @@ import UsersTableCard from '@/components/users/management/UsersTableCard';
 import ClientsTableCard from '@/components/users/management/ClientsTableCard';
 import ClientAdminsTableCard from '@/components/users/management/ClientAdminsTableCard';
 import SuperAdminsTableCard from '@/components/users/management/SuperAdminsTableCard';
-import UserManagementLoading from '@/components/users/management/UserManagementLoading';
-import UserManagementError from '@/components/users/management/UserManagementError';
 
 // Dialog imports
 import RoleManagementDialog from '@/components/users/management/dialogs/RoleManagementDialog';
@@ -61,8 +59,14 @@ const UserManagement = () => {
     userDetails,
     
     // Loading/Error states
-    isLoading,
-    hasError,
+    isUsersLoading,
+    isClientAdminsLoading,
+    isClientsLoading,
+    isSuperAdminsLoading,
+    usersError,
+    clientAdminsError,
+    clientsError,
+    superAdminsError,
     isLoadingUserDetails,
     
     // Functions
@@ -76,14 +80,6 @@ const UserManagement = () => {
     handleManageRoles,
     handleRoleChange,
   } = useUserManagement();
-
-  if (isLoading) {
-    return <UserManagementLoading />;
-  }
-
-  if (hasError) {
-    return <UserManagementError />;
-  }
 
   return (
     <DashboardLayout>
@@ -116,12 +112,13 @@ const UserManagement = () => {
             setOpenAssignmentDialog={setOpenAssignmentDialog}
             setOpenAdminCreationDialog={setOpenAdminCreationDialog}
             onUserSelect={handleUserSelect}
-            isLoading={isLoading}
+            isLoading={isUsersLoading}
+            hasError={!!usersError}
           />
         )}
 
         {/* Client Table */}
-        <ClientsTableCard clients={clients} isLoading={isLoading} />
+        <ClientsTableCard clients={clients} isLoading={isClientsLoading} hasError={!!clientsError} />
 
         {/* Client Admins Table */}
         {user.role === 'super_admin' && (
@@ -129,13 +126,18 @@ const UserManagement = () => {
             users={clientAdmins}
             setActiveAdmin={activeAdmin}
             setAdminClients={handleAdminClients}
-            isLoading={isLoading}
+            isLoading={isClientAdminsLoading}
+            hasError={!!clientAdminsError}
           />
         )}
 
         {/* Super Admins Table */}
         {user.role === 'super_admin' && (
-          <SuperAdminsTableCard users={superAdmins} isLoading={isLoading} />
+          <SuperAdminsTableCard 
+            users={superAdmins} 
+            isLoading={isSuperAdminsLoading} 
+            hasError={!!superAdminsError} 
+          />
         )}
 
         {/* Dialogs */}

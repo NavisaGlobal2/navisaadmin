@@ -75,14 +75,19 @@ export const useUserManagement = () => {
     queryKey: ['clientAdmins'],
     queryFn: async () => {
       console.log('Fetching client admins...');
-      const response = await adminApi.getAllClientAdminsWithClients();
-      console.log('API Response:', response);
+      try {
+        const response = await adminApi.getAllClientAdminsWithClients();
+        console.log('API Response:', response);
 
-      toast({
-        title: 'Client Admins Loaded',
-        description: 'Client Admins have been successfully loaded',
-      });
-      return response.data;
+        toast({
+          title: 'Client Admins Loaded',
+          description: 'Client Admins have been successfully loaded',
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching client admins:', error);
+        throw error;
+      }
     },
   });
 
@@ -94,14 +99,19 @@ export const useUserManagement = () => {
     queryKey: ['clients'],
     queryFn: async () => {
       console.log('Fetching clients...');
-      const response = await adminApi.getMyClients();
-      console.log('API Response:', response);
+      try {
+        const response = await adminApi.getMyClients();
+        console.log('API Response:', response);
 
-      toast({
-        title: 'Client Loaded',
-        description: 'Client have been successfully loaded',
-      });
-      return response.data;
+        toast({
+          title: 'Clients Loaded',
+          description: 'Clients have been successfully loaded',
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+        throw error;
+      }
     },
   });
 
@@ -113,14 +123,19 @@ export const useUserManagement = () => {
     queryKey: ['super-admins'],
     queryFn: async () => {
       console.log('Fetching super admins...');
-      const response = await adminApi.getAllSuperAdmins();
-      console.log('API Response:', response);
+      try {
+        const response = await adminApi.getAllSuperAdmins();
+        console.log('API Response:', response);
 
-      toast({
-        title: 'Super Admins Loaded',
-        description: 'Super Admins have been successfully loaded',
-      });
-      return response.data;
+        toast({
+          title: 'Super Admins Loaded',
+          description: 'Super Admins have been successfully loaded',
+        });
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching super admins:', error);
+        throw error;
+      }
     },
   });
 
@@ -229,10 +244,6 @@ export const useUserManagement = () => {
       })
     : [];
 
-  // Loading and error states
-  const isLoading = isUsersLoading && isClientAdminsLoading && isClientsLoading && isSuperAdminsLoading;
-  const hasError = usersError || clientAdminsError || clientsError || superAdminsError;
-
   return {
     // State
     searchTerm,
@@ -272,8 +283,14 @@ export const useUserManagement = () => {
     userDetails,
     
     // Loading/Error states
-    isLoading,
-    hasError,
+    isUsersLoading,
+    isClientAdminsLoading, 
+    isClientsLoading,
+    isSuperAdminsLoading,
+    usersError,
+    clientAdminsError,
+    clientsError,
+    superAdminsError,
     isLoadingUserDetails,
     
     // Functions

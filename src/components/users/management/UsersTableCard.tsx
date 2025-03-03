@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UsersTable } from '@/components/users/UsersTable';
 import { User } from '@/types/user';
+import { AlertTriangle } from 'lucide-react';
 
 interface UsersTableCardProps {
   users: User[];
@@ -15,6 +16,7 @@ interface UsersTableCardProps {
   setOpenAdminCreationDialog: (open: boolean) => void;
   onUserSelect: (userId: string) => void;
   isLoading: boolean;
+  hasError?: boolean;
 }
 
 const UsersTableCard = ({
@@ -28,6 +30,7 @@ const UsersTableCard = ({
   setOpenAdminCreationDialog,
   onUserSelect,
   isLoading,
+  hasError = false,
 }: UsersTableCardProps) => {
   return (
     <Card className='bg-white/5 border-white/10'>
@@ -35,18 +38,25 @@ const UsersTableCard = ({
         <CardTitle>Users</CardTitle>
       </CardHeader>
       <CardContent className='p-0'>
-        <UsersTable
-          users={users}
-          onAssignExpert={onAssignExpert}
-          onSuspendUser={onSuspendUser}
-          onActivateUser={onActivateUser}
-          onManageRoles={onManageRoles}
-          setSelectedUserForAssignment={setSelectedUserForAssignment}
-          setOpenAssignmentDialog={setOpenAssignmentDialog}
-          setOpenAdminCreationDialog={setOpenAdminCreationDialog}
-          onUserSelect={onUserSelect}
-          isLoading={isLoading}
-        />
+        {hasError ? (
+          <div className='flex items-center justify-center p-6 text-red-500'>
+            <AlertTriangle className="mr-2 h-5 w-5" />
+            <span>Error loading users data</span>
+          </div>
+        ) : (
+          <UsersTable
+            users={users}
+            onAssignExpert={onAssignExpert}
+            onSuspendUser={onSuspendUser}
+            onActivateUser={onActivateUser}
+            onManageRoles={onManageRoles}
+            setSelectedUserForAssignment={setSelectedUserForAssignment}
+            setOpenAssignmentDialog={setOpenAssignmentDialog}
+            setOpenAdminCreationDialog={setOpenAdminCreationDialog}
+            onUserSelect={onUserSelect}
+            isLoading={isLoading}
+          />
+        )}
       </CardContent>
     </Card>
   );
