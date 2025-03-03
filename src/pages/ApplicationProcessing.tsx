@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ import { useApplications } from '@/hooks/useApplications';
 import { useAuth } from '@/context/AuthContext';
 
 const ApplicationProcessing = () => {
-  const { applications, handleStatusChange, handleDocumentStatusUpdate, handleAssignExpert, handleAddNote } =
+  const { applications, isLoading, handleStatusChange, handleDocumentStatusUpdate, handleAssignExpert, handleAddNote } =
     useApplications();
 
   const { user } = useAuth();
@@ -70,15 +71,10 @@ const ApplicationProcessing = () => {
                 applications={filteredApplications}
                 onApplicationSelect={setSelectedApplication}
                 onAssignExpert={handleAssignExpert}
+                isLoading={isLoading}
               />
             </div>
             <div className='space-y-6'>
-              {/* <RecentApplications 
-              applications={filteredApplications}
-              onStatusChange={handleStatusChange}
-              onDocumentStatusUpdate={handleDocumentStatusUpdate}
-              onAssignExpert={handleAssignExpert}
-            /> */}
               <ApplicationSteps />
             </div>
           </div>

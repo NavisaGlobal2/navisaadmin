@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { User } from 'lucide-react';
+import { Loader2, User } from 'lucide-react';
 import { getStatusConfig } from '@/utils/applicationStatusUtils';
 import {
   Tooltip,
@@ -17,9 +17,10 @@ interface ApplicationsTableProps {
   applications: Application[];
   onApplicationSelect: (application: Application) => void;
   onAssignExpert: (applicationId: string, expertName: string) => void;
+  isLoading?: boolean;
 }
 
-export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignExpert }: ApplicationsTableProps) => {
+export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignExpert, isLoading = false }: ApplicationsTableProps) => {
   const getStatusBadge = (status: Application['status']) => {
     const config = getStatusConfig(status);
     return (
@@ -44,57 +45,52 @@ export const ApplicationsTable = ({ applications, onApplicationSelect, onAssignE
                 <TableHead>Type</TableHead>
                 <TableHead>Stage</TableHead>
                 <TableHead>Status</TableHead>
-                {/* <TableHead>Expert</TableHead> */}
                 <TableHead>Last Updated</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {applications.map((app) => (
-                <TableRow
-                  key={app.id}
-                  className='cursor-pointer hover:bg-accent/50'
-                  onClick={() => onApplicationSelect(app)}
-                >
-                  <TableCell>
-                    <div className='flex items-center space-x-2'>
-                      <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
-                        <User className='w-4 h-4' />
-                      </div>
-                      <div>
-                        <div className='font-medium'>
-                          {app.user?.first_name} {app.user?.last_name}
-                        </div>
-                        <div className='text-sm text-muted-foreground'>{app?.email}</div>
-                      </div>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary mr-2" />
+                      <span>Loading applications...</span>
                     </div>
                   </TableCell>
-                  <TableCell>{app.visa_type}</TableCell>
-                  <TableCell>{app.stage}</TableCell>
-                  <TableCell>{getStatusBadge(app.status)}</TableCell>
-                  {/* <TableCell>
-                    {app.assignedExpert || (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onAssignExpert(app.id, 'Sarah Wilson');
-                            }}
-                          >
-                            Assign Expert
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Assign application to an expert</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                  </TableCell> */}
-                  <TableCell>{new Date(app.updated_at).toLocaleDateString()}</TableCell>
                 </TableRow>
-              ))}
+              ) : applications.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    No applications found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                applications.map((app) => (
+                  <TableRow
+                    key={app.id}
+                    className='cursor-pointer hover:bg-accent/50'
+                    onClick={() => onApplicationSelect(app)}
+                  >
+                    <TableCell>
+                      <div className='flex items-center space-x-2'>
+                        <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
+                          <User className='w-4 h-4' />
+                        </div>
+                        <div>
+                          <div className='font-medium'>
+                            {app.user?.first_name} {app.user?.last_name}
+                          </div>
+                          <div className='text-sm text-muted-foreground'>{app?.email}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{app.visa_type}</TableCell>
+                    <TableCell>{app.stage}</TableCell>
+                    <TableCell>{getStatusBadge(app.status)}</TableCell>
+                    <TableCell>{new Date(app.updated_at).toLocaleDateString()}</TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

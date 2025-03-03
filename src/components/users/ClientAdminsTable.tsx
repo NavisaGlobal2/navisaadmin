@@ -6,6 +6,7 @@ import {
   Copy,
   Delete,
   DeleteIcon,
+  Loader2,
   LucideRemoveFormatting,
   RemoveFormatting,
   Shield,
@@ -25,13 +26,12 @@ import {
 
 interface UsersTableProps {
   users: User[];
-  //   onSuspendUser: (userId: string) => void;
-  //   onManageRoles: (user: User) => void;
   setAdminClients: (clients: User[]) => void;
   setActiveAdmin: (admin: User) => void;
+  isLoading?: boolean;
 }
 
-export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin }: UsersTableProps) => {
+export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin, isLoading = false }: UsersTableProps) => {
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
@@ -56,6 +56,7 @@ export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin }: Us
         });
       });
   };
+  
   return (
     <TooltipProvider>
       <Table>
@@ -64,77 +65,93 @@ export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin }: Us
             <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
-
             <TableHead>Last Updated</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell className=' flex items-center gap-2 mt-2'>
-                <span>{user.id}</span>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant='outline' size='icon' className=' w-3 h-3' onClick={() => handleCopyId(user.id)}>
-                      <Copy className='h-4 w-4' />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Copy ID</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TableCell>
-              <TableCell>
-                {user.first_name} {user.last_name}
-              </TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
-              <TableCell>
-                <div className='flex items-center gap-2'>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant='outline'
-                        size='sm'
-                        onClick={() => {
-                          setActiveAdmin(user);
-                          setAdminClients(users.find((client) => client.id === user.id).clients);
-                        }}
-                      >
-                        <Users className='h-4 w-4' />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>View Clients</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant='outline' size='sm' onClick={() => {}}>
-                        <UserX className='h-4 w-4' />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Remove User</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant='outline' size='sm' onClick={() => deleteClientAdmin(user.id)}>
-                        <UserRoundMinusIcon className='h-4 w-4' />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Delete Admin</p>
-                    </TooltipContent>
-                  </Tooltip>
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={5} className="h-24 text-center">
+                <div className="flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary mr-2" />
+                  <span>Loading client admins...</span>
                 </div>
               </TableCell>
             </TableRow>
-          ))}
+          ) : users.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="h-24 text-center">
+                No client admins found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell className=' flex items-center gap-2 mt-2'>
+                  <span>{user.id}</span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant='outline' size='icon' className=' w-3 h-3' onClick={() => handleCopyId(user.id)}>
+                        <Copy className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy ID</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  {user.first_name} {user.last_name}
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
+                <TableCell>
+                  <div className='flex items-center gap-2'>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          onClick={() => {
+                            setActiveAdmin(user);
+                            setAdminClients(users.find((client) => client.id === user.id).clients);
+                          }}
+                        >
+                          <Users className='h-4 w-4' />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>View Clients</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant='outline' size='sm' onClick={() => {}}>
+                          <UserX className='h-4 w-4' />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Remove User</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant='outline' size='sm' onClick={() => deleteClientAdmin(user.id)}>
+                          <UserRoundMinusIcon className='h-4 w-4' />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delete Admin</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </TooltipProvider>

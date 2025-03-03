@@ -1,25 +1,29 @@
+
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Application } from '@/types/application';
-import { mockApplications } from '@/data/mockApplications';
 import { adminApi } from '@/services/api';
 
 export const useApplications = () => {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    (async () => {
-      await adminApi
-        .getAllApplications()
-        .then((response) => {
-          console.log(response.data);
-          setApplications(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
+    const fetchApplications = async () => {
+      setIsLoading(true);
+      try {
+        const response = await adminApi.getAllApplications();
+        console.log(response.data);
+        setApplications(response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchApplications();
   }, []);
 
   const handleStatusChange = (applicationId: string, newStatus: Application['status']) => {
@@ -163,6 +167,7 @@ export const useApplications = () => {
 
   return {
     applications,
+    isLoading,
     handleStatusChange,
     handleDocumentStatusUpdate,
     handleAssignExpert,

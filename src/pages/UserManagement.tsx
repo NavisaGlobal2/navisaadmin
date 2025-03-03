@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -19,6 +18,7 @@ import { ClientsTable } from '@/components/users/ClientsTable';
 import { useAuth } from '@/context/AuthContext';
 import { SuperAdminsTable } from '@/components/users/SuperAdminTable';
 import UserDetailsDialog from '@/components/users/UserDetailsDialog';
+import { Loader2 } from '@/components/ui/loader';
 
 const UserManagement = () => {
   const { toast } = useToast();
@@ -47,8 +47,8 @@ const UserManagement = () => {
   // Fetch users with error handling
   const {
     data: users = [],
-    isLoading,
-    error,
+    isLoading: isUsersLoading,
+    error: usersError,
   } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
@@ -82,7 +82,7 @@ const UserManagement = () => {
 
   const {
     data: clientAdmins = [],
-    isLoading: clientAdminsLoading,
+    isLoading: isClientAdminsLoading,
     error: clientAdminsError,
   } = useQuery({
     queryKey: ['clientAdmins'],
@@ -101,7 +101,7 @@ const UserManagement = () => {
 
   const {
     data: clients = [],
-    isLoading: clientsLoading,
+    isLoading: isClientsLoading,
     error: clientsError,
   } = useQuery({
     queryKey: ['clients'],
@@ -120,7 +120,7 @@ const UserManagement = () => {
 
   const {
     data: superAdmins = [],
-    isLoading: superAdminsLoading,
+    isLoading: isSuperAdminsLoading,
     error: superAdminsError,
   } = useQuery({
     queryKey: ['super-admins'],
@@ -263,17 +263,22 @@ const UserManagement = () => {
     },
   ];
 
-  if (isLoading) {
+  if (isUsersLoading && isClientAdminsLoading && isClientsLoading && isSuperAdminsLoading) {
     return (
       <DashboardLayout>
         <div className='flex items-center justify-center h-full'>
-          <div className='text-center'>Loading users...</div>
+          <div className='text-center'>
+            <div className="flex items-center justify-center mb-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+            <div>Loading user data...</div>
+          </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  if (error) {
+  if (usersError || clientAdminsError || clientsError || superAdminsError) {
     return (
       <DashboardLayout>
         <div className='flex items-center justify-center h-full'>
@@ -344,6 +349,7 @@ const UserManagement = () => {
                 setOpenAssignmentDialog={setOpenAssignmentDialog}
                 setOpenAdminCreationDialog={setOpenAdminCreationDialog}
                 onUserSelect={handleUserSelect}
+                isLoading={isUsersLoading}
               />
             </CardContent>
           </Card>
@@ -355,7 +361,10 @@ const UserManagement = () => {
             <CardTitle>Clients</CardTitle>
           </CardHeader>
           <CardContent className='p-0'>
-            <ClientsTable users={clients} />
+            <ClientsTable 
+              users={clients} 
+              isLoading={isClientsLoading} 
+            />
           </CardContent>
         </Card>
 
@@ -369,6 +378,7 @@ const UserManagement = () => {
                 users={clientAdmins}
                 setActiveAdmin={setActiveAdmin}
                 setAdminClients={handleAdminClients}
+                isLoading={isClientAdminsLoading}
               />
             </CardContent>
           </Card>
@@ -380,7 +390,10 @@ const UserManagement = () => {
               <CardTitle>Super Admins</CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
-              <SuperAdminsTable users={superAdmins} />
+              <SuperAdminsTable 
+                users={superAdmins} 
+                isLoading={isSuperAdminsLoading} 
+              />
             </CardContent>
           </Card>
         )}
