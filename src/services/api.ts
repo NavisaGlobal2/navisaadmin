@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 const BASE_URL = 'https://navisa-api.onrender.com/api/v1';
 // const BASE_URL = 'http://localhost:5050/api/v1';
@@ -15,6 +14,31 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Handle JWT errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Check if error is due to expired JWT
+    const isJwtError = 
+      error.response?.data?.message?.includes('token has invalid claims: token is expired') ||
+      error.response?.data?.message?.includes('invalid JWT');
+    
+    if (isJwtError) {
+      // Clear token and userData from localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      
+      // Reload the page to force redirect to login
+      window.location.href = '/login';
+      
+      // Show alert to user
+      alert('Your session has expired. Please log in again.');
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
 export const adminApi = {
   login: async (email: string, password: string) => {
@@ -37,7 +61,7 @@ export const adminApi = {
     return response.data;
   },
 
-  createClientAdmin: async (data: { email: string; first_name: string; last_name: string; password: string }) => {
+  createClientAdmin: async (data: { email: string; first_name: string; last_name: string; }) => {
     const response = await api.post('/admin/create-admin', data);
     return response.data;
   },

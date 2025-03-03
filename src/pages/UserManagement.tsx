@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
@@ -42,8 +41,6 @@ const UserManagement = () => {
     setAdminId,
     openAdminCreationDialog,
     setOpenAdminCreationDialog,
-    password,
-    setPassword,
     isUserDetailsDialogOpen,
     setIsUserDetailsDialogOpen,
     adminClients,
@@ -168,8 +165,6 @@ const UserManagement = () => {
           isOpen={openAdminCreationDialog}
           onOpenChange={setOpenAdminCreationDialog}
           selectedUser={selectedUserForAssignment}
-          password={password}
-          setPassword={setPassword}
           onCreateClientAdmin={createClientAdmin}
         />
 

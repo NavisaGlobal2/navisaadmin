@@ -11,13 +11,10 @@ interface AdminCreationDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   selectedUser: User | null;
-  password: string;
-  setPassword: (password: string) => void;
   onCreateClientAdmin: (data: {
     email: string;
     first_name: string;
     last_name: string;
-    password: string;
   }) => void;
 }
 
@@ -25,8 +22,6 @@ const AdminCreationDialog = ({
   isOpen,
   onOpenChange,
   selectedUser,
-  password,
-  setPassword,
   onCreateClientAdmin,
 }: AdminCreationDialogProps) => {
   return (
@@ -49,10 +44,6 @@ const AdminCreationDialog = ({
             <Label htmlFor='last_name'>Last Name</Label>
             <Input placeholder='' value={selectedUser?.last_name} disabled />
           </div>
-          <div className='space-y-2'>
-            <Label htmlFor='password'>Password</Label>
-            <Input type='password' placeholder='Enter Password' onChange={(e) => setPassword(e.target.value)} />
-          </div>
 
           <Button
             onClick={() => {
@@ -61,7 +52,6 @@ const AdminCreationDialog = ({
                   email: selectedUser.email,
                   first_name: selectedUser.first_name,
                   last_name: selectedUser.last_name,
-                  password,
                 });
               }
             }}

@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '@/types/auth';
 import { useToast } from '@/hooks/use-toast';
@@ -69,7 +70,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const response = await adminApi.createClientAdmin({
         email,
-        password,
         first_name: name.split(' ')[0],
         last_name: name.split(' ')[1] || '',
       });

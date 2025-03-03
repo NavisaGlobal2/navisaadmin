@@ -13,24 +13,18 @@ export const useUserManagement = () => {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [activeAdmin, setActiveAdmin] = useState<User | null>(null);
 
-  // Assignment Dialog
   const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
   const [selectedUserForAssignment, setSelectedUserForAssignment] = useState<User | null>(null);
   const [adminId, setAdminId] = useState<string>('');
 
-  // Admin Creation Dialog
   const [openAdminCreationDialog, setOpenAdminCreationDialog] = useState(false);
-  const [password, setPassword] = useState<string>('');
 
-  // User Details Dialog
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isUserDetailsDialogOpen, setIsUserDetailsDialogOpen] = useState(false);
   
-  // Admin Clients Dialog
   const [adminClients, setAdminClients] = useState<User[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
 
-  // Fetch users with error handling
   const {
     data: users = [],
     isLoading: isUsersLoading,
@@ -50,7 +44,6 @@ export const useUserManagement = () => {
     },
   });
 
-  // Fetch user details when a user is selected
   const {
     data: userDetails,
     isLoading: isLoadingUserDetails,
@@ -172,7 +165,6 @@ export const useUserManagement = () => {
     email: string;
     first_name: string;
     last_name: string;
-    password: string;
   }) => {
     await adminApi
       .createClientAdmin(data)
@@ -187,7 +179,8 @@ export const useUserManagement = () => {
       .catch((error) => {
         toast({
           title: 'Error',
-          description: error.response.data.message,
+          description: error.response?.data?.message || 'Failed to create client admin',
+          variant: 'destructive',
         });
       });
   };
@@ -249,7 +242,6 @@ export const useUserManagement = () => {
     : [];
 
   return {
-    // State
     searchTerm,
     setSearchTerm,
     visaFilter,
@@ -269,8 +261,6 @@ export const useUserManagement = () => {
     setAdminId,
     openAdminCreationDialog,
     setOpenAdminCreationDialog,
-    password,
-    setPassword,
     selectedUserId,
     isUserDetailsDialogOpen,
     setIsUserDetailsDialogOpen,
@@ -279,14 +269,12 @@ export const useUserManagement = () => {
     setOpenDialog,
     filteredUsers,
     
-    // Data
     users,
     clientAdmins,
     clients,
     superAdmins,
     userDetails,
     
-    // Loading/Error states
     isUsersLoading,
     isClientAdminsLoading, 
     isClientsLoading,
@@ -297,7 +285,6 @@ export const useUserManagement = () => {
     superAdminsError,
     isLoadingUserDetails,
     
-    // Functions
     handleUserSelect,
     assignExpert,
     createClientAdmin,
