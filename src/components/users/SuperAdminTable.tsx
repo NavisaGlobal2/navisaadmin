@@ -1,9 +1,8 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
 import { Copy, Delete, Loader2, Power, Shield, UserCheck, UserX } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { adminApi } from '@/services/api';
 import {
   Tooltip,
@@ -18,6 +17,8 @@ interface UsersTableProps {
 }
 
 export const SuperAdminsTable = ({ users, isLoading = false }: UsersTableProps) => {
+  const { toast } = useToast();
+  
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
@@ -27,20 +28,16 @@ export const SuperAdminsTable = ({ users, isLoading = false }: UsersTableProps) 
   };
 
   const removeSuperAdmin = async (email: string) => {
-    await adminApi
-      .removeSuperAdmin(email)
-      .then(() => {
-        toast({
-          title: 'Super Admin Removed',
-          description: email + ' has been removed as a super admin',
-        });
-      })
-      .catch((error) => {
-        toast({
-          title: 'Error',
-          description: error.response.data.message,
-        });
+    try {
+      await adminApi.removeSuperAdmin(email);
+      toast({
+        title: 'Super Admin Removed',
+        description: email + ' has been removed as a super admin',
       });
+    } catch (error) {
+      // Error will be handled by the global interceptor
+      console.error('Error removing super admin:', error);
+    }
   };
   
   return (

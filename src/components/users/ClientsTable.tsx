@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
 import { Copy, Power, Loader2, Shield, UserCheck, UserX } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { adminApi } from '@/services/api';
 import {
   Tooltip,
@@ -18,6 +18,8 @@ interface UsersTableProps {
 }
 
 export const ClientsTable = ({ users, isLoading = false }: UsersTableProps) => {
+  const { toast } = useToast();
+  
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({

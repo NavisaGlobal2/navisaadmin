@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { toast } from '@/hooks/use-toast';
 
@@ -18,7 +17,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle JWT errors globally
+// Handle JWT errors and other errors globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -53,6 +52,27 @@ api.interceptors.response.use(
       toast({
         title: 'Access Denied',
         description: 'You do not have permission to perform this action. Please contact your administrator.',
+        variant: 'destructive',
+      });
+    } else if (error.response) {
+      // Show other API error responses with toast
+      toast({
+        title: 'Request Failed',
+        description: error.response.data?.message || error.response.data?.error || 'An error occurred',
+        variant: 'destructive',
+      });
+    } else if (error.request) {
+      // The request was made but no response was received
+      toast({
+        title: 'Network Error',
+        description: 'Unable to connect to the server. Please check your internet connection.',
+        variant: 'destructive',
+      });
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      toast({
+        title: 'Error',
+        description: error.message || 'An unexpected error occurred',
         variant: 'destructive',
       });
     }

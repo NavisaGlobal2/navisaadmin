@@ -1,4 +1,3 @@
-
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { User } from '@/types/user';
@@ -15,7 +14,7 @@ import {
   Users,
   UserX,
 } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { adminApi } from '@/services/api';
 import {
   Tooltip,
@@ -32,6 +31,8 @@ interface UsersTableProps {
 }
 
 export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin, isLoading = false }: UsersTableProps) => {
+  const { toast } = useToast();
+  
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id);
     toast({
@@ -41,20 +42,16 @@ export const ClientAdminsTable = ({ users, setAdminClients, setActiveAdmin, isLo
   };
 
   const deleteClientAdmin = async (id: string) => {
-    await adminApi
-      .deleteClientAdmin(id)
-      .then(() => {
-        toast({
-          title: 'Client Admin Deleted',
-          description: 'Client Admin has been deleted',
-        });
-      })
-      .catch((error) => {
-        toast({
-          title: 'Error',
-          description: error.response.data.message,
-        });
+    try {
+      await adminApi.deleteClientAdmin(id);
+      toast({
+        title: 'Client Admin Deleted',
+        description: 'Client Admin has been deleted',
       });
+    } catch (error) {
+      // Error will be handled by the global interceptor
+      console.error('Error deleting client admin:', error);
+    }
   };
   
   return (
