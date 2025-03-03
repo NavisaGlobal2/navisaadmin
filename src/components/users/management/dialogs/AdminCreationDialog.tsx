@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Shield } from 'lucide-react';
 import { User } from '@/types/user';
+import { useToast } from '@/hooks/use-toast';
 
 interface AdminCreationDialogProps {
   isOpen: boolean;
@@ -24,6 +25,27 @@ const AdminCreationDialog = ({
   selectedUser,
   onCreateClientAdmin,
 }: AdminCreationDialogProps) => {
+  const { toast } = useToast();
+
+  const handleCreateAdmin = () => {
+    if (selectedUser) {
+      if (!selectedUser.email || !selectedUser.first_name || !selectedUser.last_name) {
+        toast({
+          title: 'Missing Information',
+          description: 'Email, first name, and last name are required',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      onCreateClientAdmin({
+        email: selectedUser.email,
+        first_name: selectedUser.first_name,
+        last_name: selectedUser.last_name,
+      });
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -46,15 +68,7 @@ const AdminCreationDialog = ({
           </div>
 
           <Button
-            onClick={() => {
-              if (selectedUser) {
-                onCreateClientAdmin({
-                  email: selectedUser.email,
-                  first_name: selectedUser.first_name,
-                  last_name: selectedUser.last_name,
-                });
-              }
-            }}
+            onClick={handleCreateAdmin}
             className='w-full'
           >
             <Shield className='w-4 h-4 mr-2' />

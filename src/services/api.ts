@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from '@/hooks/use-toast';
+
 const BASE_URL = 'https://navisa-api.onrender.com/api/v1';
 // const BASE_URL = 'http://localhost:5050/api/v1';
 
@@ -29,11 +31,17 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       localStorage.removeItem('userData');
       
-      // Reload the page to force redirect to login
-      window.location.href = '/login';
+      // Show toast notification to user
+      toast({
+        title: 'Session Expired',
+        description: 'Your session has expired. Please log in again.',
+        variant: 'destructive',
+      });
       
-      // Show alert to user
-      alert('Your session has expired. Please log in again.');
+      // Reload the page to force redirect to login
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
     }
     
     return Promise.reject(error);
