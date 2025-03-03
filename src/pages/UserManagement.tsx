@@ -1,504 +1,176 @@
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+
+import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { UserPlus, Shield } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { UserFilters } from '@/components/users/UserFilters';
-import { UsersTable } from '@/components/users/UsersTable';
-import { User, UserDetails } from '@/types/user';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { adminApi } from '@/services/api';
-import { ClientAdminsTable } from '@/components/users/ClientAdminsTable';
-import { Input } from '@/components/ui/input';
-import { ClientsTable } from '@/components/users/ClientsTable';
 import { useAuth } from '@/context/AuthContext';
-import { SuperAdminsTable } from '@/components/users/SuperAdminTable';
+import { useUserManagement } from '@/hooks/users/useUserManagement';
+
+// Component imports
+import UserManagementHeader from '@/components/users/management/UserManagementHeader';
+import UserStats from '@/components/users/management/UserStats';
+import UserFiltersCard from '@/components/users/management/UserFiltersCard';
+import UsersTableCard from '@/components/users/management/UsersTableCard';
+import ClientsTableCard from '@/components/users/management/ClientsTableCard';
+import ClientAdminsTableCard from '@/components/users/management/ClientAdminsTableCard';
+import SuperAdminsTableCard from '@/components/users/management/SuperAdminsTableCard';
+import UserManagementLoading from '@/components/users/management/UserManagementLoading';
+import UserManagementError from '@/components/users/management/UserManagementError';
+
+// Dialog imports
+import RoleManagementDialog from '@/components/users/management/dialogs/RoleManagementDialog';
+import AdminClientsDialog from '@/components/users/management/dialogs/AdminClientsDialog';
+import AssignmentDialog from '@/components/users/management/dialogs/AssignmentDialog';
+import AdminCreationDialog from '@/components/users/management/dialogs/AdminCreationDialog';
 import UserDetailsDialog from '@/components/users/UserDetailsDialog';
-import { Loader2 } from '@/components/ui/loader';
 
 const UserManagement = () => {
-  const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [visaFilter, setVisaFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
-  const [activeAdmin, setActiveAdmin] = useState<User | null>(null);
-
   const { user } = useAuth();
-
-  /// Assignment Dialog
-  const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
-  const [selectedUserForAssignment, setSelectedUserForAssignment] = useState<User | null>(null);
-  const [adminId, setAdminId] = useState<string>('');
-
-  //Admin Creation Dialog
-  const [openAdminCreationDialog, setOpenAdminCreationDialog] = useState(false);
-  const [password, setPassword] = useState<string>('');
-
-  // User Details Dialog
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [isUserDetailsDialogOpen, setIsUserDetailsDialogOpen] = useState(false);
-
-  // Fetch users with error handling
   const {
-    data: users = [],
-    isLoading: isUsersLoading,
-    error: usersError,
-  } = useQuery({
-    queryKey: ['users'],
-    queryFn: async () => {
-      console.log('Fetching users...');
-      const response = await adminApi.getAllUsers();
-      console.log('API Response:', response);
+    // State
+    searchTerm,
+    setSearchTerm,
+    visaFilter,
+    setVisaFilter,
+    statusFilter,
+    setStatusFilter,
+    selectedUser,
+    isRoleDialogOpen,
+    setIsRoleDialogOpen,
+    activeAdmin,
+    openAssignmentDialog,
+    setOpenAssignmentDialog,
+    selectedUserForAssignment,
+    setSelectedUserForAssignment,
+    adminId,
+    setAdminId,
+    openAdminCreationDialog,
+    setOpenAdminCreationDialog,
+    password,
+    setPassword,
+    isUserDetailsDialogOpen,
+    setIsUserDetailsDialogOpen,
+    adminClients,
+    openDialog,
+    setOpenDialog,
+    filteredUsers,
+    
+    // Data
+    users,
+    clientAdmins,
+    clients,
+    superAdmins,
+    userDetails,
+    
+    // Loading/Error states
+    isLoading,
+    hasError,
+    isLoadingUserDetails,
+    
+    // Functions
+    handleUserSelect,
+    assignExpert,
+    createClientAdmin,
+    handleAssignExpert,
+    handleSuspendUser,
+    handleActivateUser,
+    handleAdminClients,
+    handleManageRoles,
+    handleRoleChange,
+  } = useUserManagement();
 
-      toast({
-        title: 'Users Loaded',
-        description: 'Users have been successfully loaded',
-      });
-      return response.data;
-    },
-  });
-
-  // Fetch user details when a user is selected
-  const {
-    data: userDetails,
-    isLoading: isLoadingUserDetails,
-    error: userDetailsError,
-    refetch: refetchUserDetails,
-  } = useQuery({
-    queryKey: ['userDetails', selectedUserId],
-    queryFn: async () => {
-      if (!selectedUserId) return null;
-      const response = await adminApi.getUserDetails(selectedUserId);
-      return response as UserDetails;
-    },
-    enabled: !!selectedUserId,
-  });
-
-  const {
-    data: clientAdmins = [],
-    isLoading: isClientAdminsLoading,
-    error: clientAdminsError,
-  } = useQuery({
-    queryKey: ['clientAdmins'],
-    queryFn: async () => {
-      console.log('Fetching client admins...');
-      const response = await adminApi.getAllClientAdminsWithClients();
-      console.log('API Response:', response);
-
-      toast({
-        title: 'Client Admins Loaded',
-        description: 'Client Admins have been successfully loaded',
-      });
-      return response.data;
-    },
-  });
-
-  const {
-    data: clients = [],
-    isLoading: isClientsLoading,
-    error: clientsError,
-  } = useQuery({
-    queryKey: ['clients'],
-    queryFn: async () => {
-      console.log('Fetching clients...');
-      const response = await adminApi.getMyClients();
-      console.log('API Response:', response);
-
-      toast({
-        title: 'Client Loaded',
-        description: 'Client have been successfully loaded',
-      });
-      return response.data;
-    },
-  });
-
-  const {
-    data: superAdmins = [],
-    isLoading: isSuperAdminsLoading,
-    error: superAdminsError,
-  } = useQuery({
-    queryKey: ['super-admins'],
-    queryFn: async () => {
-      console.log('Fetching super admins...');
-      const response = await adminApi.getAllSuperAdmins();
-      console.log('API Response:', response);
-
-      toast({
-        title: 'Super Admins Loaded',
-        description: 'Super Admins have been successfully loaded',
-      });
-      return response.data;
-    },
-  });
-
-  const handleUserSelect = (userId: string) => {
-    setSelectedUserId(userId);
-    setIsUserDetailsDialogOpen(true);
-  };
-
-  const assignExpert = async (userId: string, adminId: string) => {
-    await adminApi
-      .assignClient({ client_id: userId, admin_id: adminId })
-      .then((res) => {
-        console.log(res);
-        toast({
-          title: 'Expert Assigned',
-          description: `Expert has been assigned to user ${userId}`,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        toast({
-          title: 'Error',
-          description: 'Failed to assign expert',
-          variant: 'destructive',
-        });
-      });
-  };
-
-  const createClientAdmin = async (data: {
-    email: string;
-    first_name: string;
-    last_name: string;
-    password: string;
-  }) => {
-    await adminApi
-      .createClientAdmin(data)
-      .then(() => {
-        toast({
-          title: 'Client Admin Created',
-          description: 'Client Admin has been created',
-        });
-
-        setOpenAdminCreationDialog(false);
-      })
-      .catch((error) => {
-        toast({
-          title: 'Error',
-          description: error.response.data.message,
-        });
-      });
-  };
-
-  const handleAssignExpert = (userId: string) => {
-    toast({
-      title: 'Expert Assigned',
-      description: `Expert has been assigned to user ${userId}`,
-    });
-  };
-
-  const handleSuspendUser = (userId: string) => {
-    toast({
-      title: 'User Suspended',
-      description: `User ${userId} has been suspended`,
-      variant: 'destructive',
-    });
-  };
-
-  const handleActivateUser = (userId: string) => {
-    toast({
-      title: 'User Activated',
-      description: `User ${userId} has been activated`,
-    });
-  };
-
-  const handleAdminClients = (user: User[]) => {
-    console.log('Admin Clients:', user);
-    setAdminClients(user);
-    setOpenDialog(true);
-  };
-
-  const handleManageRoles = (user: User) => {
-    setSelectedUser(user);
-    setIsRoleDialogOpen(true);
-  };
-
-  const handleRoleChange = (role: string) => {
-    if (!selectedUser) return;
-
-    toast({
-      title: 'Role Updated',
-      description: `${selectedUser.name}'s role has been updated to ${role}`,
-    });
-    setIsRoleDialogOpen(false);
-  };
-
-  const [adminClients, setAdminClients] = useState<User[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const filteredUsers = users
-    ? users.filter((user: User) => {
-        const matchesSearch =
-          user?.first_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-          user?.last_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-          user?.email?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-          user?.id.toLowerCase().includes(searchTerm?.toLowerCase());
-        const matchesVisa = visaFilter === 'all' || user?.visaType === visaFilter;
-        const matchesStatus = statusFilter === 'all' || user?.status === statusFilter;
-        return matchesSearch && matchesVisa && matchesStatus;
-      })
-    : [];
-
-  const stats = [
-    {
-      title: 'Total Users',
-      value: users?.length || 0,
-      description: 'Active users in the system',
-    },
-    {
-      title: 'Active Users',
-      value: users?.filter((user) => user.status === 'Active').length || 0,
-      description: 'Currently active accounts',
-    },
-    {
-      title: 'Pending Users',
-      value: users?.filter((user) => user.status === 'Pending').length || 0,
-      description: 'Awaiting verification',
-    },
-  ];
-
-  if (isUsersLoading && isClientAdminsLoading && isClientsLoading && isSuperAdminsLoading) {
-    return (
-      <DashboardLayout>
-        <div className='flex items-center justify-center h-full'>
-          <div className='text-center'>
-            <div className="flex items-center justify-center mb-4">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-            <div>Loading user data...</div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
+  if (isLoading) {
+    return <UserManagementLoading />;
   }
 
-  if (usersError || clientAdminsError || clientsError || superAdminsError) {
-    return (
-      <DashboardLayout>
-        <div className='flex items-center justify-center h-full'>
-          <div className='text-center text-red-500'>Error loading users. Please try again later.</div>
-        </div>
-      </DashboardLayout>
-    );
+  if (hasError) {
+    return <UserManagementError />;
   }
 
   return (
     <DashboardLayout>
       <div className='space-y-6'>
         {/* Header Section */}
-        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4'>
-          <div>
-            <h1 className='text-2xl font-semibold'>User Management</h1>
-            <p className='text-sm text-gray-400 mt-1'>Manage user accounts and roles</p>
-          </div>
-          <Button size='default' className='w-full sm:w-auto'>
-            <UserPlus className='w-4 h-4 mr-2' />
-            Add User
-          </Button>
-        </div>
+        <UserManagementHeader />
 
         {/* Stats Cards */}
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {stats.map((stat, index) => (
-            <Card key={index} className='bg-white/5 border-white/10'>
-              <CardHeader>
-                <CardTitle className='text-sm font-medium text-gray-400'>{stat.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='text-2xl font-bold mb-1'>{stat.value}</div>
-                <p className='text-sm text-gray-400'>{stat.description}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <UserStats users={users} />
 
         {/* Filters Section */}
-        <Card className='bg-white/5 border-white/10'>
-          <CardContent className='p-4 md:p-6'>
-            <UserFilters
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              visaFilter={visaFilter}
-              setVisaFilter={setVisaFilter}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-            />
-          </CardContent>
-        </Card>
+        <UserFiltersCard
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          visaFilter={visaFilter}
+          setVisaFilter={setVisaFilter}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+        />
 
         {/* Users Table */}
         {user.role === 'super_admin' && (
-          <Card className='bg-white/5 border-white/10'>
-            <CardHeader className='p-4 md:p-6'>
-              <CardTitle>Users</CardTitle>
-            </CardHeader>
-            <CardContent className='p-0'>
-              <UsersTable
-                users={filteredUsers}
-                onAssignExpert={handleAssignExpert}
-                onSuspendUser={handleSuspendUser}
-                onActivateUser={handleActivateUser}
-                onManageRoles={handleManageRoles}
-                setSelectedUserForAssignment={setSelectedUserForAssignment}
-                setOpenAssignmentDialog={setOpenAssignmentDialog}
-                setOpenAdminCreationDialog={setOpenAdminCreationDialog}
-                onUserSelect={handleUserSelect}
-                isLoading={isUsersLoading}
-              />
-            </CardContent>
-          </Card>
+          <UsersTableCard
+            users={filteredUsers}
+            onAssignExpert={handleAssignExpert}
+            onSuspendUser={handleSuspendUser}
+            onActivateUser={handleActivateUser}
+            onManageRoles={handleManageRoles}
+            setSelectedUserForAssignment={setSelectedUserForAssignment}
+            setOpenAssignmentDialog={setOpenAssignmentDialog}
+            setOpenAdminCreationDialog={setOpenAdminCreationDialog}
+            onUserSelect={handleUserSelect}
+            isLoading={isLoading}
+          />
         )}
+
+        {/* Client Table */}
+        <ClientsTableCard clients={clients} isLoading={isLoading} />
 
         {/* Client Admins Table */}
-        <Card className='bg-white/5 border-white/10'>
-          <CardHeader className='p-4 md:p-6'>
-            <CardTitle>Clients</CardTitle>
-          </CardHeader>
-          <CardContent className='p-0'>
-            <ClientsTable 
-              users={clients} 
-              isLoading={isClientsLoading} 
-            />
-          </CardContent>
-        </Card>
-
         {user.role === 'super_admin' && (
-          <Card className='bg-white/5 border-white/10'>
-            <CardHeader className='p-4 md:p-6'>
-              <CardTitle>Client Admins And their Clients</CardTitle>
-            </CardHeader>
-            <CardContent className='p-0'>
-              <ClientAdminsTable
-                users={clientAdmins}
-                setActiveAdmin={setActiveAdmin}
-                setAdminClients={handleAdminClients}
-                isLoading={isClientAdminsLoading}
-              />
-            </CardContent>
-          </Card>
+          <ClientAdminsTableCard
+            users={clientAdmins}
+            setActiveAdmin={activeAdmin}
+            setAdminClients={handleAdminClients}
+            isLoading={isLoading}
+          />
         )}
 
+        {/* Super Admins Table */}
         {user.role === 'super_admin' && (
-          <Card className='bg-white/5 border-white/10'>
-            <CardHeader className='p-4 md:p-6'>
-              <CardTitle>Super Admins</CardTitle>
-            </CardHeader>
-            <CardContent className='p-0'>
-              <SuperAdminsTable 
-                users={superAdmins} 
-                isLoading={isSuperAdminsLoading} 
-              />
-            </CardContent>
-          </Card>
+          <SuperAdminsTableCard users={superAdmins} isLoading={isLoading} />
         )}
 
-        {/* Role Management Dialog */}
-        <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Manage User Role</DialogTitle>
-              <DialogDescription>Change the role for {selectedUser?.name}</DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='role'>Role</Label>
-                <Select onValueChange={handleRoleChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select a role' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='admin'>Admin</SelectItem>
-                    <SelectItem value='moderator'>Moderator</SelectItem>
-                    <SelectItem value='user'>User</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Dialogs */}
+        <RoleManagementDialog
+          isOpen={isRoleDialogOpen}
+          onOpenChange={setIsRoleDialogOpen}
+          selectedUser={selectedUser}
+          onRoleChange={handleRoleChange}
+        />
 
-        {/* Admin Clients Dialog */}
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Admin Clients</DialogTitle>
-              <DialogDescription>Clients for {activeAdmin?.first_name}</DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              <div className='space-y-2'>
-                <ClientsTable users={adminClients} />
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AdminClientsDialog
+          isOpen={openDialog}
+          onOpenChange={setOpenDialog}
+          adminClients={adminClients}
+          activeAdmin={activeAdmin}
+        />
 
-        {/* Assignment Dialog */}
-        <Dialog open={openAssignmentDialog} onOpenChange={setOpenAssignmentDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Assign Expert</DialogTitle>
-              <DialogDescription>Assign an expert to {selectedUserForAssignment?.first_name}</DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='role'>Expert Assignment</Label>
-                <Input placeholder='Enter Admin ID' onChange={(e) => setAdminId(e.target.value)} />
-                <Button onClick={() => assignExpert(selectedUserForAssignment?.id, adminId)}>Assign Expert</Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AssignmentDialog
+          isOpen={openAssignmentDialog}
+          onOpenChange={setOpenAssignmentDialog}
+          selectedUser={selectedUserForAssignment}
+          adminId={adminId}
+          setAdminId={setAdminId}
+          onAssignExpert={assignExpert}
+        />
 
-        {/* Admin Creation Dialog */}
-        <Dialog open={openAdminCreationDialog} onOpenChange={setOpenAdminCreationDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Client Admin</DialogTitle>
-              <DialogDescription>Create a new client admin</DialogDescription>
-            </DialogHeader>
-            <div className='grid gap-4 py-4'>
-              <div className='space-y-2'>
-                <Label htmlFor='email'>Email</Label>
-                <Input placeholder='Enter Email' value={selectedUserForAssignment?.email} disabled />
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='first_name'>First Name</Label>
-                <Input placeholder='Enter First Name' disabled value={selectedUserForAssignment?.first_name} />
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='last_name'>Last Name</Label>
-                <Input placeholder='' value={selectedUserForAssignment?.last_name} disabled />
-              </div>
-              <div className='space-y-2'>
-                <Label htmlFor='password'>Password</Label>
-                <Input type='password' placeholder='Enter Password' onChange={(e) => setPassword(e.target.value)} />
-              </div>
+        <AdminCreationDialog
+          isOpen={openAdminCreationDialog}
+          onOpenChange={setOpenAdminCreationDialog}
+          selectedUser={selectedUserForAssignment}
+          password={password}
+          setPassword={setPassword}
+          onCreateClientAdmin={createClientAdmin}
+        />
 
-              <Button
-                onClick={() => {
-                  createClientAdmin({
-                    email: selectedUserForAssignment?.email,
-                    first_name: selectedUserForAssignment?.first_name,
-                    last_name: selectedUserForAssignment?.last_name,
-                    password,
-                  });
-                }}
-                className='w-full'
-              >
-                <Shield className='w-4 h-4 mr-2' />
-                Create Client Admin
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* User Details Dialog */}
         <UserDetailsDialog
           isOpen={isUserDetailsDialogOpen}
           onClose={() => setIsUserDetailsDialogOpen(false)}
