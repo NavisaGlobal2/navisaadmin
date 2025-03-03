@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { User, UserDetails } from '@/types/user';
@@ -103,6 +102,11 @@ export const useUserManagement = () => {
         const response = await adminApi.getMyClients();
         console.log('API Response:', response);
 
+        if (response?.success === false && response?.message === "You are not authorized") {
+          console.log('User not authorized to view clients');
+          return [];
+        }
+
         toast({
           title: 'Clients Loaded',
           description: 'Clients have been successfully loaded',
@@ -110,7 +114,7 @@ export const useUserManagement = () => {
         return response.data;
       } catch (error) {
         console.error('Error fetching clients:', error);
-        throw error;
+        return [];
       }
     },
   });

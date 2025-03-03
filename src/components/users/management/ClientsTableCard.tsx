@@ -18,14 +18,9 @@ const ClientsTableCard = ({ clients, isLoading, hasError = false }: ClientsTable
         <CardTitle>Clients</CardTitle>
       </CardHeader>
       <CardContent className='p-0'>
-        {hasError ? (
-          <div className='flex items-center justify-center p-6 text-red-500'>
-            <AlertTriangle className="mr-2 h-5 w-5" />
-            <span>Error loading clients data</span>
-          </div>
-        ) : (
-          <ClientsTable users={clients} isLoading={isLoading} />
-        )}
+        {/* For client data, we always show the table even if there's an error
+            We'll just show an empty table in case of authorization errors */}
+        <ClientsTable users={clients} isLoading={isLoading} />
       </CardContent>
     </Card>
   );
