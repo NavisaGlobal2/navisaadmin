@@ -5,6 +5,12 @@ import { User } from '@/types/user';
 import { Copy, Power, Shield, UserCheck, UserX } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { adminApi } from '@/services/api';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface UsersTableProps {
   users: User[];
@@ -54,93 +60,123 @@ export const UsersTable = ({
       });
   };
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Visa Type</TableHead>
-          {/* <TableHead>Country</TableHead>
-          <TableHead>Status</TableHead> */}
-          <TableHead>Expert</TableHead>
-          <TableHead>Last Updated</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map((user) => (
-          <TableRow 
-            key={user.id} 
-            className="cursor-pointer hover:bg-muted"
-            onClick={() => onUserSelect(user.id)}
-          >
-            <TableCell className='flex items-center gap-2 mt-2'>
-              <span>{user.id}</span>
-              <Button 
-                variant='outline' 
-                size='icon' 
-                className='w-3 h-3' 
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent row click event
-                  handleCopyId(user.id);
-                }}
-              >
-                <Copy className='h-4 w-4' />
-              </Button>
-            </TableCell>
-            <TableCell>
-              {user.first_name} {user.last_name}
-            </TableCell>
-            <TableCell>
-              <span>{user.email}</span>
-            </TableCell>
-            <TableCell>{user.visa_type}</TableCell>
-            {/* <TableCell>{user.country}</TableCell>
-            <TableCell>{user.status}</TableCell> */}
-            <TableCell>{user?.client_admin?.name ? user.client_admin.name : 'not assigned'}</TableCell>
-            <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
-            <TableCell>
-              <div className='flex items-center gap-2'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent row click event
-                    setSelectedUserForAssignment(user);
-                    setOpenAdminCreationDialog(true);
-                  }}
-                >
-                  <Shield className='h-4 w-4' />
-                </Button>
-
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent row click event
-                    setSelectedUserForAssignment(user);
-                    setOpenAssignmentDialog(true);
-                  }}
-                >
-                  <UserCheck className='h-4 w-4' />
-                </Button>
-
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent row click event
-                    createSuperAdmin(user.email);
-                  }}
-                >
-                  <Power className='h-4 w-4' />
-                </Button>
-              </div>
-            </TableCell>
+    <TooltipProvider>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Visa Type</TableHead>
+            {/* <TableHead>Country</TableHead>
+            <TableHead>Status</TableHead> */}
+            <TableHead>Expert</TableHead>
+            <TableHead>Last Updated</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {users.map((user) => (
+            <TableRow 
+              key={user.id} 
+              className="cursor-pointer hover:bg-muted"
+              onClick={() => onUserSelect(user.id)}
+            >
+              <TableCell className='flex items-center gap-2 mt-2'>
+                <span>{user.id}</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant='outline' 
+                      size='icon' 
+                      className='w-3 h-3' 
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent row click event
+                        handleCopyId(user.id);
+                      }}
+                    >
+                      <Copy className='h-4 w-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy ID</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TableCell>
+              <TableCell>
+                {user.first_name} {user.last_name}
+              </TableCell>
+              <TableCell>
+                <span>{user.email}</span>
+              </TableCell>
+              <TableCell>{user.visa_type}</TableCell>
+              {/* <TableCell>{user.country}</TableCell>
+              <TableCell>{user.status}</TableCell> */}
+              <TableCell>{user?.client_admin?.name ? user.client_admin.name : 'not assigned'}</TableCell>
+              <TableCell>{new Date(user.updated_at).toDateString()}</TableCell>
+              <TableCell>
+                <div className='flex items-center gap-2'>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click event
+                          setSelectedUserForAssignment(user);
+                          setOpenAdminCreationDialog(true);
+                        }}
+                      >
+                        <Shield className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Create Client Admin</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click event
+                          setSelectedUserForAssignment(user);
+                          setOpenAssignmentDialog(true);
+                        }}
+                      >
+                        <UserCheck className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Assign Expert</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent row click event
+                          createSuperAdmin(user.email);
+                        }}
+                      >
+                        <Power className='h-4 w-4' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Make Super Admin</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TooltipProvider>
   );
 };
